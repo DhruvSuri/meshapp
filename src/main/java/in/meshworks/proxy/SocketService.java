@@ -1,12 +1,10 @@
 package in.meshworks.proxy;
 
 
-import com.mongodb.DBCollection;
-import com.mongodb.async.client.MongoCollection;
-import in.meshworks.Mongo.MongoFactory;
-import in.meshworks.proxy.Beans.Node;
-import in.meshworks.proxy.Beans.Profile;
-import in.meshworks.proxy.Beans.ProxyResponse;
+import in.meshworks.mongo.MongoFactory;
+import in.meshworks.proxy.beans.Node;
+import in.meshworks.proxy.beans.Profile;
+import in.meshworks.proxy.beans.ProxyResponse;
 import in.meshworks.utils.AzazteUtils;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -214,7 +212,7 @@ public class SocketService {
             mongoFactory.getMongoTemplate().save(objectToSave);
         }catch (Exception failed){
             failed.printStackTrace();
-            log.error("Failed to save to Mongo " + objectToSave.toString());
+            log.error("Failed to save to mongo " + objectToSave.toString());
         }
     }
 

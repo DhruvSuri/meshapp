@@ -1,4 +1,4 @@
-package in.meshworks.Mongo;
+package in.meshworks.mongo;
 
 import com.mongodb.MongoClient;
 import org.springframework.context.annotation.Bean;

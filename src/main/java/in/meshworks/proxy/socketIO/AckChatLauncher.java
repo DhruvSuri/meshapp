@@ -1,4 +1,4 @@
-package in.meshworks.proxy.SocketIO;
+package in.meshworks.proxy.socketIO;
 
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.DataListener;

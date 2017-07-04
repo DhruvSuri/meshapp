@@ -1,11 +1,7 @@
 package in.meshworks.proxy;
 
-import com.mongodb.DBObject;
-import in.meshworks.Mongo.MongoFactory;
+import in.meshworks.mongo.MongoFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 /**
