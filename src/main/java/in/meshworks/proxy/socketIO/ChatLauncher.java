@@ -1,4 +1,4 @@
-package in.meshworks.proxy.SocketIO;
+package in.meshworks.proxy.socketIO;
 
 public class ChatLauncher {
 

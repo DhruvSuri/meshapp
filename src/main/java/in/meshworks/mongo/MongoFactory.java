@@ -1,4 +1,4 @@
-package in.meshworks.Mongo;
+package in.meshworks.mongo;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

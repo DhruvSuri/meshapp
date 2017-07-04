@@ -1,4 +1,4 @@
-package in.meshworks.proxy.Beans;
+package in.meshworks.proxy.beans;
 
 /**
  * Created by dhruv.suri on 22/06/17.

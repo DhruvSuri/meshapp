@@ -1,4 +1,4 @@
-package in.meshworks.proxy.Beans;
+package in.meshworks.proxy.beans;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 

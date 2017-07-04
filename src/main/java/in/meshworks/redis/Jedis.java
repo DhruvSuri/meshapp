@@ -1,4 +1,4 @@
-package in.meshworks.Redis;
+package in.meshworks.redis;
 
 /**
  * Created by dhruv.suri on 07/05/17.
