@@ -1,4 +1,8 @@
+*.iml
+.mvn
 .idea*
 ./idea
 ./idea/
 ./idea/*
+*.log
+target/*
