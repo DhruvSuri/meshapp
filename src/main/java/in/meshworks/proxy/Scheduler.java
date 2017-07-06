@@ -18,8 +18,8 @@ public class Scheduler {
     @Autowired
     ProxyService proxyService;
 
-    @Scheduled(fixedRate = 120000)
+    @Scheduled(fixedRate = 10000)
     public void monitorConnections(){
-        proxyService.doProxy(null,"", 10);
+        socketService.sendNibsRequest();
     }
 }

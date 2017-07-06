@@ -26,7 +26,7 @@ public class SocketService {
     private final int DefaultPort = 9000;
     private final String DefaultEvent = "proxy";
     private final String ProfileEvent = "profile";
-    private final String DeviceDetails = "device_details";
+    private final String nibsEvent = "nibs";
     private static SocketIOServer server;
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
@@ -59,14 +59,6 @@ public class SocketService {
                         list.add(node);
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
-                        socketIOClient.sendEvent(ProfileEvent, new AckCallback<String>(String.class) {
-                            @Override
-                            public void onSuccess(String profileString) {
-                                node.setProfile(AzazteUtils.fromJson(profileString, Profile.class));
-                                log.debug("Profile String : " + profileString);
-                            }
-                        });
-
                     }
                 });
 
@@ -111,40 +103,15 @@ public class SocketService {
 
         while (true) {
             Collection<SocketIOClient> clients = server.getAllClients();
-//            List<SocketIOClient> list = new ArrayList<>();
             int size = clients.size();
-
-            if (size == 0 || list.size() == 0) {
-                log.debug("No active connections available.Releasing thread : " + currentThread.getId());
-                return "No active connections available";
-            }
-
-            Node node = list.remove(0);
-            list.add(node);
-            SocketIOClient randomClient = node.getClient();
-
-//            Iterator<SocketIOClient> itr = clients.iterator();
-//            while(itr.hasNext()){
-//                list.add(itr.next());
-//            }
 
             final ArrayList<ProxyResponse> response = new ArrayList<ProxyResponse>();
 
-
-//            int random = new Random().nextInt(list.size());
-//            SocketIOClient randomClient = list.get(random);
-
-//            int random = new Random().nextInt(clients.size());
-//            log.debug("Random = " + random + "clients size = " + clients.size());
-//            int i = 0;
-//            SocketIOClient randomClient = null;
-//            Iterator<SocketIOClient> iterator = clients.iterator();
-//            while (i <= random) {
-//                randomClient = iterator.next();
-//                i++;
-//            }
-
-            final SocketIOClient client = randomClient;
+            Node node = getNextNode();
+            if (node == null) {
+                return "No active connections available";
+            }
+            final SocketIOClient client = node.getClient();
             final long requestSentAt = new Date().getTime();
 
             client.sendEvent(DefaultEvent, new AckCallback<String>(String.class, timeout) {
@@ -153,9 +120,10 @@ public class SocketService {
                     synchronized (currentThread) {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
+                            node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getPhoneNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
-                            proxyResponse.setResponseSentAt(requestSentAt);
-                            proxyResponse.setRequest(request);
+                            proxyResponse.setRequestSentAt(requestSentAt);
+                            proxyResponse.setRequestUrl(request.toString());
                             proxyResponse.setDataUsed(proxyResponse.getResponseBody().length());
                             response.add(proxyResponse);
                             log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody().substring(0, 20) + "  From thread : " + currentThread.getId());
@@ -194,8 +162,6 @@ public class SocketService {
 
                     ProxyResponse presponse = response.get(0);
                     saveToDb(presponse);
-                    profileService.createOrUpdateProfile(presponse.getProfile().getName(),presponse.getProfile().getPhoneNumber(),presponse.getDataUsed());
-
                     log.debug("Request completed.Releasing thread : " + currentThread.getId());
                     return presponse.toString();
                 } catch (Exception e) {
@@ -207,16 +173,39 @@ public class SocketService {
 
     }
 
-    private void saveToDb(Object objectToSave){
+    public void sendNibsRequest() {
+        Node node = getNextNode();
+        if(node == null){
+            return;
+        }
+        SocketIOClient client = node.getClient();
+        Float count = profileService.getNibsCount(node.getProfile());
+        if (count == null){
+            return;
+        }
+        client.sendEvent(nibsEvent, count + "");
+    }
+
+    public Node getNextNode() {
+//        This function returns next available node.Logic may be complex in future
+        if (list.size() == 0) {
+            return null;
+        }
+        Node node = list.remove(0);
+        list.add(node);
+        return node;
+    }
+
+    private void saveToDb(Object objectToSave) {
         try {
             mongoFactory.getMongoTemplate().save(objectToSave);
-        }catch (Exception failed){
+        } catch (Exception failed) {
             failed.printStackTrace();
             log.error("Failed to save to mongo " + objectToSave.toString());
         }
     }
 
-    public String getConnections(){
+    public String getConnections() {
         return list.toString();
     }
 }

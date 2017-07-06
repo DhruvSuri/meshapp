@@ -1,29 +1,37 @@
 package in.meshworks.controllers;
 
+import in.meshworks.proxy.ProfileService;
 import in.meshworks.proxy.ProxyService;
+import in.meshworks.proxy.beans.Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 
 /**
  * Created by harshvardhansharma on 04/07/17.
  */
-@Controller
+@RestController
 public class NodeController {
 
     @Autowired
-    ProxyService proxyService;
+    ProfileService profileService;
 
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public String proxyGET(WebRequest request, @RequestParam("url") String url, @RequestParam(value = "timeout", required = false) Integer timeout) {
-        if (timeout == null){
-            timeout = 30;
-        }
-        return proxyService.doProxy(request, url, timeout);
+    @RequestMapping(value = "user", method = RequestMethod.GET)
+    public void completeProfile(@RequestParam("name") String name, @RequestParam("phoneNumber") String phoneNumber, @RequestParam(value = "referral", required = false) String referral) {
+        profileService.createOrUpdateProfile(name, phoneNumber, referral);
     }
 
+    @RequestMapping(value = "verifyotp", method = RequestMethod.GET)
+    public Profile verifyOTP(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("token") String token) {
+        return profileService.verifyOTP(phoneNumber, token);
+    }
 
+    @RequestMapping(value = "sendotp", method = RequestMethod.GET)
+    public void initiateProfile(@RequestParam("phoneNumber") String phoneNumber, @RequestParam("deviceId") String deviceId) {
+        profileService.initiateProfile(phoneNumber, deviceId);
+    }
 }

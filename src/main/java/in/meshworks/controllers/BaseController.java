@@ -17,11 +17,6 @@ public class BaseController {
     @Autowired
     ProxyService proxyService;
 
-    @RequestMapping(method = RequestMethod.GET, value = "listview")
-    public String getListInfo() {
-        return proxyService.list();
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "mail")
     public void mail(@RequestParam("name") String name, @RequestParam("email") String email, @RequestParam("size") String size, @RequestParam("msg") String msg) {
         String text = name + "  " + email + "  " + size + "  " + msg + "  ";
