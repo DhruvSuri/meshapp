@@ -23,7 +23,7 @@ public class ProxyController {
     ProxyService proxyService;
 
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
-    public String proxyGET(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout) {
+    public String proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout) {
         if (timeout == null) {
             timeout = 30;
         }

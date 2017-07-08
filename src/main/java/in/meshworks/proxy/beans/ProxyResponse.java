@@ -113,7 +113,7 @@ public class ProxyResponse {
                 ", requestReceivedAt=" + new Date(requestReceivedAt) +
                 ", responseSentAt=" + new Date(responseSentAt) +
                 ", responseReceivedAt=" + new Date(responseReceivedAt) +
-                ", responseBody='" + responseBody + '\'' +
+                ", responseBody='" + responseBody.substring(0,50) + '\'' +
                 ", dataUsed='" + dataUsed + '\'' +
                 '}';
     }

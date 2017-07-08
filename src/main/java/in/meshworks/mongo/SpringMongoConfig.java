@@ -13,7 +13,7 @@ public class SpringMongoConfig {
     public
     @Bean
     MongoDbFactory mongoDbFactory() throws Exception {
-        return new SimpleMongoDbFactory(new MongoClient("52.66.66.36"), "local");
+        return new SimpleMongoDbFactory(new MongoClient(), "local");
     }
 
     public

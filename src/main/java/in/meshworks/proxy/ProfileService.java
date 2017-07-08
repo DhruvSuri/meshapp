@@ -2,6 +2,8 @@ package in.meshworks.proxy;
 
 import in.meshworks.mongo.MongoFactory;
 import in.meshworks.proxy.beans.Profile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 @Service
 public class ProfileService {
+    private static final Logger log = LoggerFactory.getLogger(SocketService.class);
+
     @Autowired
     MongoFactory mongoFactory;
 
@@ -22,9 +26,13 @@ public class ProfileService {
     OTPService otpService;
 
     public void createOrUpdateProfile(String name, String phoneNumber, String referral) {
+        Profile profile = null;
         try{
-            mongoFactory.getMongoTemplate().save(new Profile(name, phoneNumber, referral));
-        }catch(Exception ignored){}
+            profile = new Profile(name, phoneNumber, referral);
+            mongoFactory.getMongoTemplate().save(profile);
+        }catch(Exception failed){
+            log.error("Failed to save profile " + profile);
+        }
     }
 
     public Float getNibsCount(Profile profile) {
