@@ -120,12 +120,13 @@ public class SocketService {
                     synchronized (currentThread) {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
+                            response.add(proxyResponse);
                             node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getPhoneNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
                             proxyResponse.setRequestUrl(request.toString());
                             proxyResponse.setDataUsed(proxyResponse.getResponseBody().length());
-                            response.add(proxyResponse);
+
                             log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody().substring(0, 20) + "  From thread : " + currentThread.getId());
                         } catch (Exception e) {
                             e.printStackTrace();
