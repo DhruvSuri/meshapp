@@ -121,7 +121,7 @@ public class SocketService {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
                             response.add(proxyResponse);
-                            node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getPhoneNumber()));
+                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getPhoneNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
                             proxyResponse.setRequestUrl(request.toString());
@@ -164,7 +164,7 @@ public class SocketService {
                     ProxyResponse presponse = response.get(0);
                     saveToDb(presponse);
                     log.debug("Request completed.Releasing thread : " + currentThread.getId());
-                    return presponse.toString();
+                    return "Phone : " + presponse.getPhoneNumber() + "Data Used : " + presponse.getDataUsed() + "Response Body : " + presponse.getResponseBody();
                 } catch (Exception e) {
                     log.debug(e.getMessage());
                 }
@@ -176,12 +176,12 @@ public class SocketService {
 
     public void sendNibsRequest() {
         Node node = getNextNode();
-        if(node == null){
+        if (node == null) {
             return;
         }
         SocketIOClient client = node.getClient();
         Float count = profileService.getNibsCount(node.getProfile());
-        if (count == null){
+        if (count == null) {
             return;
         }
         client.sendEvent(nibsEvent, count + "");
