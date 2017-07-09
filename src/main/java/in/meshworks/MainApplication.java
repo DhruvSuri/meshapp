@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootApplication(scanBasePackages = { "in.meshworks"})
 @EnableScheduling
-public class DemoApplication {
+public class MainApplication {
 
     public static void main(String[] args) {
-        ApplicationContext ctx = SpringApplication.run(DemoApplication.class, args);
+        ApplicationContext ctx = SpringApplication.run(MainApplication.class, args);
     }
 
 }

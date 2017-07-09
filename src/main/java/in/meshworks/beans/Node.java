@@ -1,4 +1,4 @@
-package in.meshworks.proxy.beans;
+package in.meshworks.beans;
 
 import com.corundumstudio.socketio.SocketIOClient;
 

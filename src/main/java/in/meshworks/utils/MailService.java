@@ -15,7 +15,7 @@ import java.util.Properties;
 public class MailService {
 
 
-    public void sendMail(String text, boolean onlyMe) {
+     public void sendMail(String text, boolean onlyMe) {
         String to;
         String subject;
         if (onlyMe) {
