@@ -38,5 +38,8 @@ public class SpringMongoConfig {
 //    }
 //    )
 
+
+//    MongoCredential.createScramSha1Credential("elb","admin","elbproxymesh".toCharArray()))), "local")
+
 }
 
