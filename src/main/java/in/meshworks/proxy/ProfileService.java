@@ -31,7 +31,8 @@ public class ProfileService {
             profile = new Profile(name, phoneNumber, referral);
             mongoFactory.getMongoTemplate().save(profile);
         }catch(Exception failed){
-            log.error("Failed to save profile " + profile);
+            failed.printStackTrace();
+            log.error(failed.getMessage() + "Failed to save profile " + profile);
         }
     }
 
