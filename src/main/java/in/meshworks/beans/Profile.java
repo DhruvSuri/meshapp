@@ -1,4 +1,4 @@
-package in.meshworks.proxy.beans;
+package in.meshworks.beans;
 
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,9 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document
 public class Profile {
+
     private String name;
     @Indexed(unique = true)
-    private String phoneNumber;
+    private String mobileNumber;
     private String deviceId;
     private String referralNumber;
     private float nibsCount;
@@ -18,19 +19,18 @@ public class Profile {
     private int latestOTP;
 
     public Profile() {
-
     }
 
-    public Profile(String name, String phoneNumber, String referral) {
+    public Profile(String name, String mobileNumber, String referral) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.mobileNumber = mobileNumber;
         this.deviceId = deviceId;
         this.referralNumber = referral;
     }
 
-    public Profile(String name, String phoneNumber) {
+    public Profile(String name, String mobileNumber) {
         this.name = name;
-        this.phoneNumber = phoneNumber;
+        this.mobileNumber = mobileNumber;
     }
 
     public String getName() {
@@ -41,12 +41,12 @@ public class Profile {
         this.name = name;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
     public float getNibsCount() {
@@ -93,8 +93,12 @@ public class Profile {
     public String toString() {
         return "Profile{" +
                 "name='" + name + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
+                ", mobileNumber='" + mobileNumber + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", referralNumber='" + referralNumber + '\'' +
                 ", nibsCount=" + nibsCount +
+                ", isVerified=" + isVerified +
+                ", latestOTP=" + latestOTP +
                 '}';
     }
 }
