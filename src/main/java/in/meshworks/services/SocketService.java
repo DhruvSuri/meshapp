@@ -1,10 +1,10 @@
-package in.meshworks.proxy;
+package in.meshworks.services;
 
 
 import in.meshworks.mongo.MongoFactory;
-import in.meshworks.proxy.beans.Node;
-import in.meshworks.proxy.beans.Profile;
-import in.meshworks.proxy.beans.ProxyResponse;
+import in.meshworks.beans.Node;
+import in.meshworks.beans.Profile;
+import in.meshworks.beans.ProxyResponse;
 import in.meshworks.utils.AzazteUtils;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -97,7 +97,7 @@ public class SocketService {
     }
 
 
-    public String sendProxyRequest(final Request request, int timeout) {
+    public ProxyResponse getProxyResponse(final Request request, int timeout) {
         final Thread currentThread = Thread.currentThread();
         log.debug("Held thread : " + currentThread.getId());
 
@@ -109,7 +109,7 @@ public class SocketService {
 
             Node node = getNextNode();
             if (node == null) {
-                return "No active connections available";
+                return null;
             }
             final SocketIOClient client = node.getClient();
             final long requestSentAt = new Date().getTime();
@@ -121,13 +121,13 @@ public class SocketService {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
                             response.add(proxyResponse);
-                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getPhoneNumber()));
+                            node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getMobileNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
                             proxyResponse.setRequestUrl(request.toString());
-                            proxyResponse.setDataUsed(proxyResponse.getResponseBody().length());
+                            proxyResponse.setDataUsed(proxyResponse.getResponseBody().length);
 
-                            log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody().substring(0, 20) + "  From thread : " + currentThread.getId());
+                            log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody()[0] + "  From thread : " + currentThread.getId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -150,9 +150,9 @@ public class SocketService {
                     log.debug("Waiting - " + "  From thread : " + currentThread.getId());
                     log.debug("Sending request to " + node.getProfile());
                     currentThread.wait(timeout * 1000);
-                    log.debug("Notified - " + "  From thread : " + currentThread.getId());
+                    log.debug("Notified - " + " From thread : " + currentThread.getId());
                     if (response.size() == 0) {
-                        log.debug("Response size 0... Continuing ");
+                        log.debug("Response size 0.. Continuing ");
                         continue;
                     }
 
@@ -164,7 +164,7 @@ public class SocketService {
                     ProxyResponse presponse = response.get(0);
                     saveToDb(presponse);
                     log.debug("Request completed.Releasing thread : " + currentThread.getId());
-                    return "Phone : " + presponse.getPhoneNumber() + "Data Used : " + presponse.getDataUsed() + "Response Body : " + presponse.getResponseBody();
+                    return presponse;
                 } catch (Exception e) {
                     log.debug(e.getMessage());
                 }

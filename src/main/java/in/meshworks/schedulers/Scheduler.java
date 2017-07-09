@@ -1,5 +1,7 @@
-package in.meshworks.proxy;
+package in.meshworks.schedulers;
 
+import in.meshworks.services.ProxyService;
+import in.meshworks.services.SocketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

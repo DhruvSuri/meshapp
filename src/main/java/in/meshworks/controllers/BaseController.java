@@ -1,15 +1,13 @@
 package in.meshworks.controllers;
 
 import in.meshworks.redis.RedisFactory;
-import in.meshworks.proxy.ProxyService;
-import in.meshworks.proxy.SocketService;
+import in.meshworks.services.ProxyService;
 import in.meshworks.utils.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 
 @RestController
 public class BaseController {
