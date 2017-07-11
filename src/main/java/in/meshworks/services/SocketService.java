@@ -31,7 +31,7 @@ import java.util.*;
 @Service
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9000;
+    private final int DefaultPort = 9001;
     private final String DefaultEvent = "proxy";
     private final String ProfileEvent = "profile";
     private final String nibsEvent = "nibs";
