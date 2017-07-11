@@ -21,20 +21,20 @@ import java.util.Map;
 @Component
 public class RequestResponseService {
 
-    public Request buildGetRequest(final String url, final HttpHeaders headers) {
-        Request.Builder builder = new Request.Builder().cacheControl(new CacheControl.Builder().noCache().build()).url(url);
+    public Request.Builder buildGetRequest(final String url, final HttpHeaders headers) {
+        Request.Builder builder = new Request.Builder().cacheControl(CacheControl.FORCE_NETWORK).url(url);
         mapHeaders(builder, headers);
-        return builder.build();
+        return builder;
     }
 
-    public Request buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
+    public Request.Builder buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
         Request.Builder builder = new Request.Builder().cacheControl(new CacheControl.Builder().noCache().build()).url(url);
 
         builder.post(RequestBody.create(MediaType.parse(headers.getContentType().toString()), requestBody));
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
             builder.header(entry.getKey(), entry.getKey());
         }
-        return builder.build();
+        return builder;
     }
 
     public ResponseEntity<Object> buildGenericResponse(ProxyResponse proxyResponse) {

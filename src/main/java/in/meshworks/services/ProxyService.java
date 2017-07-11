@@ -25,7 +25,7 @@ public class ProxyService {
     RequestResponseService requestResponseService;
 
     public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod) {
-        Request request;
+        Request.Builder request;
         switch (httpMethod){
             case GET:
                 request = requestResponseService.buildGetRequest(url, headers);

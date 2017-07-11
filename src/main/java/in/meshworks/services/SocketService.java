@@ -105,7 +105,7 @@ public class SocketService {
     }
 
 
-    public ProxyResponse getProxyResponse(final Request request, int timeout) {
+    public ProxyResponse getProxyResponse(final Request.Builder request, int timeout) {
         final Thread currentThread = Thread.currentThread();
         log.debug("Held thread : " + currentThread.getId());
 
