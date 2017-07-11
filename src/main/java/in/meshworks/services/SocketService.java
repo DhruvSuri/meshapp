@@ -1,6 +1,13 @@
 package in.meshworks.services;
 
 
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.MongoDatabase;
+import com.mongodb.client.MongoCollection;
 import in.meshworks.mongo.MongoFactory;
 import in.meshworks.beans.Node;
 import in.meshworks.beans.Profile;
@@ -10,6 +17,7 @@ import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import okhttp3.Request;
+import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +31,7 @@ import java.util.*;
 @Service
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9000;
+    private final int DefaultPort = 9001;
     private final String DefaultEvent = "proxy";
     private final String ProfileEvent = "profile";
     private final String nibsEvent = "nibs";
@@ -199,6 +207,15 @@ public class SocketService {
 
     private void saveToDb(Object objectToSave) {
         try {
+//            com.mongodb.client.MongoDatabase database = new MongoClient(new ServerAddress("52.66.66.36"), Arrays.asList(MongoCredential.createScramSha1Credential("elb", "admin", "elbproxymesh".toCharArray()))).getDatabase("local");
+//            MongoCollection<Document> profile = database.getCollection("Profile");
+//
+//            profile.insertOne(objectToSave, new SingleResultCallback<Void>() {
+//                @Override
+//                public void onResult(final Void result, final Throwable t) {
+//
+//                }
+//            });
             mongoFactory.getMongoTemplate().save(objectToSave);
         } catch (Exception failed) {
             failed.printStackTrace();
