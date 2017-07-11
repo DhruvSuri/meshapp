@@ -1,6 +1,7 @@
 package in.meshworks.services;
 
 import in.meshworks.beans.ProxyResponse;
+import okhttp3.CacheControl;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -21,14 +22,13 @@ import java.util.Map;
 public class RequestResponseService {
 
     public Request buildGetRequest(final String url, final HttpHeaders headers) {
-        Request.Builder builder = new Request.Builder().url(url);
+        Request.Builder builder = new Request.Builder().cacheControl(new CacheControl.Builder().noCache().build()).url(url);
         mapHeaders(builder, headers);
         return builder.build();
     }
 
     public Request buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
-        Request.Builder builder = new Request.Builder()
-                .url(url);
+        Request.Builder builder = new Request.Builder().cacheControl(new CacheControl.Builder().noCache().build()).url(url);
 
         builder.post(RequestBody.create(MediaType.parse(headers.getContentType().toString()), requestBody));
         for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
@@ -48,15 +48,15 @@ public class RequestResponseService {
 
     private MultiValueMap<String, String> mapToMultiValueMap(Map<String, List<String>> map) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        for(Map.Entry<String, List<String>> entry : map.entrySet()) {
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
             multiValueMap.put(entry.getKey(), entry.getValue());
         }
-        return  multiValueMap;
+        return multiValueMap;
     }
 
-    private void mapHeaders(Request.Builder requestBuilder, HttpHeaders httpHeaders){
+    private void mapHeaders(Request.Builder requestBuilder, HttpHeaders httpHeaders) {
         for (Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
-            if(!entry.getKey().equals("host")){
+            if (!entry.getKey().equals("host")) {
                 requestBuilder.header(entry.getKey(), listToCSV(entry.getValue()));
             }
         }
@@ -64,7 +64,7 @@ public class RequestResponseService {
 
     private String listToCSV(List<String> list) {
         StringBuilder sb = new StringBuilder();
-        for(String item : list){
+        for (String item : list) {
             sb.append(item);
             sb.append(";");
         }
