@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Profile {
 
+    private String id;
     private String name;
     @Indexed(unique = true)
     private String mobileNumber;
@@ -31,6 +32,14 @@ public class Profile {
     public Profile(String name, String mobileNumber) {
         this.name = name;
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
