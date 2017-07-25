@@ -17,7 +17,7 @@ public class Profile {
     private String referralNumber;
     private float nibsCount;
     private boolean isVerified;
-    private int latestOTP;
+    private String latestOTP;
 
     public Profile() {
     }
@@ -90,11 +90,11 @@ public class Profile {
         isVerified = verified;
     }
 
-    public int getLatestOTP() {
+    public String getLatestOTP() {
         return latestOTP;
     }
 
-    public void setLatestOTP(int latestOTP) {
+    public void setLatestOTP(String latestOTP) {
         this.latestOTP = latestOTP;
     }
 

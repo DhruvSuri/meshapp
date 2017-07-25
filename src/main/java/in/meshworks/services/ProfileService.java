@@ -43,22 +43,40 @@ public class ProfileService {
         if (profile.getMobileNumber() == null) {
             return null;
         }
-        Query query = new Query();
-        query.addCriteria(Criteria.where("mobileNumber").is(profile.getMobileNumber()));
-        Profile profileFetched = mongoFactory.getMongoTemplate().findOne(query, Profile.class);
-        if (profileFetched == null) {
+        Profile profileFetched = findByMobileNumber(profile.getMobileNumber());
+        if (profileFetched == null){
             return null;
         }
         return profileFetched.getNibsCount();
     }
 
     public Profile verifyOTP(String mobileNumber, String token) {
-
+        Profile profile = findByMobileNumber(mobileNumber);
+        if (profile.getLatestOTP().equals(token)){
+            return profile;
+        }
         return null;
     }
 
     public void initiateProfile(String mobileNumber, String deviceId) {
-        otpService.sendOTP(mobileNumber);
+        String otp = otpService.sendOTP(mobileNumber);
+        Profile profile = findByMobileNumber(mobileNumber);
+        if (profile == null){
+            createOrUpdateProfile("",mobileNumber,"");
+        }
+        saveLatestOTP(mobileNumber,otp);
+    }
+
+    private Profile findByMobileNumber(String mobileNumber){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("mobileNumber").is(mobileNumber));
+        return mongoFactory.getMongoTemplate().findOne(query, Profile.class);
+    }
+
+    private void saveLatestOTP(String mobileNumber, String otp){
+        Profile profile = findByMobileNumber(mobileNumber);
+        profile.setLatestOTP(otp);
+        mongoFactory.getMongoTemplate().save(profile);
     }
 
     public void calculateNibs() {

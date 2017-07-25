@@ -1,13 +1,6 @@
 package in.meshworks.services;
 
-
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.async.SingleResultCallback;
-import com.mongodb.async.client.MongoDatabase;
-import com.mongodb.client.MongoCollection;
+import in.meshworks.beans.ProxyRequest;
 import in.meshworks.mongo.MongoFactory;
 import in.meshworks.beans.Node;
 import in.meshworks.beans.Profile;
@@ -16,8 +9,6 @@ import in.meshworks.utils.AzazteUtils;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
-import okhttp3.Request;
-import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +96,7 @@ public class SocketService {
     }
 
 
-    public ProxyResponse getProxyResponse(final Request.Builder request, int timeout) {
+    public ProxyResponse getProxyResponse(final ProxyRequest request, int timeout) {
         final Thread currentThread = Thread.currentThread();
         log.debug("Held thread : " + currentThread.getId());
 
@@ -132,7 +123,7 @@ public class SocketService {
                             node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getMobileNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
-                            proxyResponse.setRequestUrl(request.toString());
+                            proxyResponse.setRequestUrl(request.getUrl());
                             proxyResponse.setDataUsed(proxyResponse.getResponseBody().length);
 
                             log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody()[0] + "  From thread : " + currentThread.getId());
