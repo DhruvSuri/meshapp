@@ -1,5 +1,6 @@
 package in.meshworks.services;
 
+import in.meshworks.beans.ProxyRequest;
 import in.meshworks.beans.ProxyResponse;
 import okhttp3.CacheControl;
 import okhttp3.MediaType;
@@ -21,20 +22,21 @@ import java.util.Map;
 @Component
 public class RequestResponseService {
 
-    public Request.Builder buildGetRequest(final String url, final HttpHeaders headers) {
-        Request.Builder builder = new Request.Builder().cacheControl(CacheControl.FORCE_NETWORK).url(url);
-        mapHeaders(builder, headers);
-        return builder;
+    public ProxyRequest buildGetRequest(final String url, final HttpHeaders headers) {
+        ProxyRequest proxyRequest = new ProxyRequest();
+        proxyRequest.setMethod("GET");
+        proxyRequest.setUrl(url);
+        mapHeaders(proxyRequest, headers);
+        return proxyRequest;
     }
 
-    public Request.Builder buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
-        Request.Builder builder = new Request.Builder().cacheControl(new CacheControl.Builder().noCache().build()).url(url);
-
-        builder.post(RequestBody.create(MediaType.parse(headers.getContentType().toString()), requestBody));
-        for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
-            builder.header(entry.getKey(), entry.getKey());
-        }
-        return builder;
+    public ProxyRequest buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
+        ProxyRequest proxyRequest = new ProxyRequest();
+        proxyRequest.setMethod("GET");
+        proxyRequest.setUrl(url);
+        mapHeaders(proxyRequest, headers);
+        proxyRequest.setBody(requestBody.getBytes());
+        return proxyRequest;
     }
 
     public ResponseEntity<Object> buildGenericResponse(ProxyResponse proxyResponse) {
@@ -54,10 +56,10 @@ public class RequestResponseService {
         return multiValueMap;
     }
 
-    private void mapHeaders(Request.Builder requestBuilder, HttpHeaders httpHeaders) {
+    private void mapHeaders(ProxyRequest proxyRequest, HttpHeaders httpHeaders) {
         for (Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
             if (!entry.getKey().equals("host")) {
-                requestBuilder.header(entry.getKey(), listToCSV(entry.getValue()));
+                proxyRequest.getHeaders().put(entry.getKey(), listToCSV(entry.getValue()));
             }
         }
     }

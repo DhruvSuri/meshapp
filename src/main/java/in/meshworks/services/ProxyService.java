@@ -1,7 +1,7 @@
 package in.meshworks.services;
 
+import in.meshworks.beans.ProxyRequest;
 import in.meshworks.beans.ProxyResponse;
-import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,8 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Created by dhruv.suri on 11/05/17.
@@ -24,19 +23,22 @@ public class ProxyService {
     @Autowired
     RequestResponseService requestResponseService;
 
-    public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod) {
-        Request.Builder request;
-        switch (httpMethod){
+    public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod, boolean headersAllowed) {
+        ProxyRequest proxyRequest;
+        switch (httpMethod) {
             case GET:
-                request = requestResponseService.buildGetRequest(url, headers);
+                proxyRequest = requestResponseService.buildGetRequest(url, headers);
                 break;
             case POST:
-                request = requestResponseService.buildPostRequest(url, headers, requestBody);
+                proxyRequest = requestResponseService.buildPostRequest(url, headers, requestBody);
                 break;
             default:
-                request = null;
+                proxyRequest = null;
         }
-        ProxyResponse proxyResponse = socketService.getProxyResponse(request, timeout);
+        if (!headersAllowed) {
+            proxyRequest.setHeaders(new HashMap<>());
+        }
+        ProxyResponse proxyResponse = socketService.getProxyResponse(proxyRequest, timeout);
         if (proxyResponse == null) {
             return new ResponseEntity<>("No nodes available", HttpStatus.SERVICE_UNAVAILABLE);
         }
