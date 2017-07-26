@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Profile {
 
+    private String id;
     private String name;
     @Indexed(unique = true)
     private String mobileNumber;
@@ -16,7 +17,7 @@ public class Profile {
     private String referralNumber;
     private float nibsCount;
     private boolean isVerified;
-    private int latestOTP;
+    private String latestOTP;
 
     public Profile() {
     }
@@ -31,6 +32,14 @@ public class Profile {
     public Profile(String name, String mobileNumber) {
         this.name = name;
         this.mobileNumber = mobileNumber;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -81,11 +90,11 @@ public class Profile {
         isVerified = verified;
     }
 
-    public int getLatestOTP() {
+    public String getLatestOTP() {
         return latestOTP;
     }
 
-    public void setLatestOTP(int latestOTP) {
+    public void setLatestOTP(String latestOTP) {
         this.latestOTP = latestOTP;
     }
 

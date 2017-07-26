@@ -19,29 +19,29 @@ public class ProxyController {
     ProxyService proxyService;
 
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
-    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout) {
+    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
         if (timeout == null) {
             timeout = 30;
         }
 
-        if (url == null || url.isEmpty()){
+        if (url == null || url.isEmpty()) {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, null, timeout, HttpMethod.GET);
+        return proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed);
     }
 
     @RequestMapping(value = "proxy", method = RequestMethod.POST)
-    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout) {
+    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
         if (timeout == null) {
             timeout = 30;
         }
 
-        if (url == null || url.isEmpty()){
+        if (url == null || url.isEmpty()) {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST);
+        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST, headersAllowed);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "listview")

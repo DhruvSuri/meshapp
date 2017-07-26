@@ -17,7 +17,7 @@ public class SpringMongoConfig {
     public
     @Bean
     MongoDbFactory mongoDbFactory() throws Exception {
-        return new SimpleMongoDbFactory(new MongoClient(new ServerAddress("52.66.66.36"), Arrays.asList(MongoCredential.createScramSha1Credential("elb","admin","elbproxymesh".toCharArray()))), "local");
+        return new SimpleMongoDbFactory(new MongoClient(new ServerAddress("13.126.216.38"), Arrays.asList(MongoCredential.createScramSha1Credential("elb","admin","elbproxymesh".toCharArray()))), "local");
     }
 
     public

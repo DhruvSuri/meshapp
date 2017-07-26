@@ -1,5 +1,6 @@
 package in.meshworks.schedulers;
 
+import in.meshworks.services.ProfileService;
 import in.meshworks.services.ProxyService;
 import in.meshworks.services.SocketService;
 import org.slf4j.Logger;
@@ -20,8 +21,16 @@ public class Scheduler {
     @Autowired
     ProxyService proxyService;
 
+    @Autowired
+    ProfileService profileService;
+
     @Scheduled(fixedRate = 10000)
     public void monitorConnections(){
         socketService.sendNibsRequest();
+    }
+
+    @Scheduled(fixedRate = 1000000)
+    public void calculateNibs(){
+        profileService.calculateNibs();
     }
 }
