@@ -25,7 +25,7 @@ public class SocketService {
     private final int DefaultPort = 9001;
     private final String DefaultEvent = "proxy";
     private final String ProfileEvent = "profile";
-    private final String nibsEvent = "nibs";
+    private final String stats = "stats";
     private static SocketIOServer server;
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
@@ -120,7 +120,7 @@ public class SocketService {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
                             response.add(proxyResponse);
-                            node.setProfile(new Profile(proxyResponse.getName(),proxyResponse.getMobileNumber()));
+                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getMobileNumber()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
                             proxyResponse.setRequestUrl(request.getUrl());
@@ -179,11 +179,8 @@ public class SocketService {
             return;
         }
         SocketIOClient client = node.getClient();
-        Float count = profileService.getNibsCount(node.getProfile());
-        if (count == null) {
-            return;
-        }
-        client.sendEvent(nibsEvent, count + "");
+        Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
+        client.sendEvent(stats, profile.getNibsCount() + "," + profile.getReferralCount() + "," + profile.getNibsCount() + "," + 500);
     }
 
     public Node getNextNode() {
@@ -215,7 +212,7 @@ public class SocketService {
     }
 
     public String getConnections() {
-        return list.toString();
+        return "Size = " + list.size() + "\n\n" + list.toString();
     }
 }
 

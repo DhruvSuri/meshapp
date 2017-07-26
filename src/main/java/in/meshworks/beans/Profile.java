@@ -16,6 +16,7 @@ public class Profile {
     private String deviceId;
     private String referralNumber;
     private float nibsCount;
+    private long referralCount;
     private boolean isVerified;
     private String latestOTP;
 
@@ -96,6 +97,14 @@ public class Profile {
 
     public void setLatestOTP(String latestOTP) {
         this.latestOTP = latestOTP;
+    }
+
+    public long getReferralCount() {
+        return referralCount;
+    }
+
+    public void setReferralCount(long referralCount) {
+        this.referralCount = referralCount;
     }
 
     @Override

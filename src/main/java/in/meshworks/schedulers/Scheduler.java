@@ -3,11 +3,14 @@ package in.meshworks.schedulers;
 import in.meshworks.services.ProfileService;
 import in.meshworks.services.ProxyService;
 import in.meshworks.services.SocketService;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
 
 /**
  * Created by dhruv.suri on 30/05/17.
@@ -29,7 +32,7 @@ public class Scheduler {
         socketService.sendNibsRequest();
     }
 
-    @Scheduled(fixedRate = 1000000)
+    @Scheduled(fixedRate = 21600000)
     public void calculateNibs(){
         profileService.calculateNibs();
     }

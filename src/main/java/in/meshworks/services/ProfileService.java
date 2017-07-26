@@ -36,17 +36,8 @@ public class ProfileService {
         }
     }
 
-    public Float getNibsCount(Profile profile) {
-        if (profile == null) {
-            return null;
-        }
-        if (profile.getMobileNumber() == null) {
-            return null;
-        }
-        Profile profileFetched = findByMobileNumber(profile.getMobileNumber());
-        if (profileFetched == null){
-            return null;
-        }
+    public Float getNibsCount(String mobilNumber) {
+        Profile profileFetched = findByMobileNumber(mobilNumber);
         return profileFetched.getNibsCount();
     }
 
@@ -67,7 +58,7 @@ public class ProfileService {
         saveLatestOTP(mobileNumber,otp);
     }
 
-    private Profile findByMobileNumber(String mobileNumber){
+    public Profile findByMobileNumber(String mobileNumber){
         Query query = new Query();
         query.addCriteria(Criteria.where("mobileNumber").is(mobileNumber));
         return mongoFactory.getMongoTemplate().findOne(query, Profile.class);
@@ -90,7 +81,12 @@ public class ProfileService {
                 count += response.getDataUsed();
             }
             profile.setNibsCount(getNibsFromBytes(count));
-//            mongoFactory.getMongoTemplate().save(profile);
+
+            query = new Query();
+            query.addCriteria(Criteria.where("referralNumber").is(profile.getMobileNumber()));
+            long referralCount = mongoFactory.getMongoTemplate().count(query,Profile.class);
+            profile.setReferralCount(referralCount);
+            mongoFactory.getMongoTemplate().save(profile);
         }
     }
 
