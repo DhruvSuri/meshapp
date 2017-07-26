@@ -180,7 +180,7 @@ public class SocketService {
         }
         SocketIOClient client = node.getClient();
         Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
-        client.sendEvent(stats, (int)profile.getNibsCount() + "," + (int)profile.getReferralCount() + "," + (int)profile.getNibsCount() + "," + 500);
+        client.sendEvent(stats, profile.getNibsCount() + "," + profile.getReferralCount() + "," + profile.getNibsCount() + "," + 500);
     }
 
     public Node getNextNode() {

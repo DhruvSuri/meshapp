@@ -36,7 +36,7 @@ public class ProfileService {
         }
     }
 
-    public Float getNibsCount(String mobilNumber) {
+    public int getNibsCount(String mobilNumber) {
         Profile profileFetched = findByMobileNumber(mobilNumber);
         return profileFetched.getNibsCount();
     }
@@ -85,7 +85,7 @@ public class ProfileService {
             query = new Query();
             query.addCriteria(Criteria.where("referralNumber").is(profile.getMobileNumber()));
             long referralCount = mongoFactory.getMongoTemplate().count(query,Profile.class);
-            profile.setReferralCount(referralCount);
+            profile.setReferralCount((int)referralCount);
             mongoFactory.getMongoTemplate().save(profile);
         }
     }

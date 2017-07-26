@@ -15,8 +15,8 @@ public class Profile {
     private String mobileNumber;
     private String deviceId;
     private String referralNumber;
-    private float nibsCount;
-    private long referralCount;
+    private int nibsCount;
+    private int referralCount;
     private boolean isVerified;
     private String latestOTP;
 
@@ -59,13 +59,6 @@ public class Profile {
         this.mobileNumber = mobileNumber;
     }
 
-    public float getNibsCount() {
-        return nibsCount;
-    }
-
-    public void setNibsCount(float nibsCount) {
-        this.nibsCount = nibsCount;
-    }
 
     public String getDeviceId() {
         return deviceId;
@@ -99,11 +92,19 @@ public class Profile {
         this.latestOTP = latestOTP;
     }
 
-    public long getReferralCount() {
+    public int getNibsCount() {
+        return nibsCount;
+    }
+
+    public void setNibsCount(int nibsCount) {
+        this.nibsCount = nibsCount;
+    }
+
+    public int getReferralCount() {
         return referralCount;
     }
 
-    public void setReferralCount(long referralCount) {
+    public void setReferralCount(int referralCount) {
         this.referralCount = referralCount;
     }
 

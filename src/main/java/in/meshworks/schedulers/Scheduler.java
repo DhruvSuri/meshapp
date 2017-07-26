@@ -32,7 +32,7 @@ public class Scheduler {
         socketService.sendNibsRequest();
     }
 
-    @Scheduled(fixedRate = 21600000)
+    @Scheduled(fixedRate = 2160)
     public void calculateNibs(){
         profileService.calculateNibs();
     }
