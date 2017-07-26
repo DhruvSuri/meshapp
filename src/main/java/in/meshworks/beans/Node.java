@@ -9,6 +9,7 @@ import java.util.UUID;
  */
 public class Node {
 
+    private String mobileNumber;
     private Profile profile;
     private UUID sessionID;
     private SocketIOClient client;
@@ -21,6 +22,7 @@ public class Node {
     public Node(SocketIOClient client) {
         this.client = client;
         this.sessionID = client.getSessionId();
+        this.mobileNumber = client.getHandshakeData().getSingleUrlParam("userMobile");
     }
 
     public Profile getProfile() {
@@ -49,9 +51,10 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node{" +
-                "profile=" + profile +
-                ", sessionID=" + sessionID +
-                "}\n";
+        return "{" +
+                "\"mobileNumber\": \"" + mobileNumber + "\"," +
+                "\"sessionID\": \"" + sessionID + "\"," +
+                "\"profile\": \"" + profile + "\"" +
+                "}";
     }
 }
