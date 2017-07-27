@@ -1,10 +1,7 @@
 package in.meshworks.services;
 
-import in.meshworks.beans.ProxyRequest;
+import in.meshworks.beans.*;
 import in.meshworks.mongo.MongoFactory;
-import in.meshworks.beans.Node;
-import in.meshworks.beans.Profile;
-import in.meshworks.beans.ProxyResponse;
 import in.meshworks.utils.AzazteUtils;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -24,6 +21,7 @@ public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
     private final int DefaultPort = 9001;
     private final String DefaultEvent = "proxy";
+    private final String WebView = "webview";
     private final String ProfileEvent = "profile";
     private final String stats = "stats";
     private static SocketIOServer server;
@@ -95,15 +93,28 @@ public class SocketService {
         }
     }
 
+    public ProxyResponse webviewRequest(final String url) {
+        Node node = getNextNode();
+        if (node == null) {
+            return null;
+        }
+
+        SocketIOClient client = node.getClient();
+        client.sendEvent(WebView, url);
+        ProxyResponse response = new ProxyResponse();
+        response.setRequestUrl(url);
+        response.setMobileNumber(node.getMobileNumber());
+        response.setRequestSentAt(new Date().getTime());
+        saveToDb(response);
+        return response;
+    }
+
 
     public ProxyResponse getProxyResponse(final ProxyRequest request, int timeout) {
         final Thread currentThread = Thread.currentThread();
         log.debug("Held thread : " + currentThread.getId());
 
         while (true) {
-            Collection<SocketIOClient> clients = server.getAllClients();
-            int size = clients.size();
-
             final ArrayList<ProxyResponse> response = new ArrayList<ProxyResponse>();
 
             Node node = getNextNode();
@@ -180,7 +191,10 @@ public class SocketService {
         }
         SocketIOClient client = node.getClient();
         Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
-        client.sendEvent(stats, profile.getNibsCount() + "," + profile.getReferralCount() + "," + (profile.getNibsCount() + profile.getReferralCount()*10) + "," + 500);
+        int nibs = profile.getNibsCount();
+        int referralCount = profile.getReferralCount();
+        int maxThreshold = 500;
+        client.sendEvent(stats, "" + nibs + "," + (10 * referralCount) + "," + (nibs + 10 * referralCount) + "," + maxThreshold);
     }
 
     public Node getNextNode() {

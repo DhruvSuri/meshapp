@@ -18,6 +18,16 @@ public class ProxyController {
     @Autowired
     ProxyService proxyService;
 
+    @RequestMapping(value = "view", method = RequestMethod.GET)
+    public ResponseEntity<Object> webview(@RequestParam("url") String url) {
+        if (url == null || url.isEmpty()) {
+            return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
+        }
+
+        return proxyService.webview(url);
+    }
+
+
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
     public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
         if (timeout == null) {
