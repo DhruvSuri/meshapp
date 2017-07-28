@@ -45,14 +45,6 @@ public class ProxyService {
         return requestResponseService.buildGenericResponse(proxyResponse);
     }
 
-    public ResponseEntity<Object> webview(String url){
-        ProxyResponse response = socketService.webviewRequest(url);
-        if (response == null) {
-            return new ResponseEntity<>("No nodes available", HttpStatus.SERVICE_UNAVAILABLE);
-        }
-        return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
-    }
-
     public String list() {
         return socketService.getConnections();
     }

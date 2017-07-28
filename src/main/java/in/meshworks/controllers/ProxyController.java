@@ -1,6 +1,9 @@
 package in.meshworks.controllers;
 
+import in.meshworks.beans.ProxyResponse;
 import in.meshworks.services.ProxyService;
+import in.meshworks.services.SocketService;
+import in.meshworks.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,13 +21,18 @@ public class ProxyController {
     @Autowired
     ProxyService proxyService;
 
+    @Autowired
+    ViewService viewService;
+
     @RequestMapping(value = "view", method = RequestMethod.GET)
-    public ResponseEntity<Object> webview(@RequestParam("url") String url) {
+    public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span) {
         if (url == null || url.isEmpty()) {
-            return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.webview(url);
+        viewService.generateViews(url, views, span);
+
+        return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }
 
 
