@@ -111,7 +111,11 @@ public class SocketService {
         client.sendEvent(WebView, new AckCallback<String>(String.class, 10) {
             @Override
             public void onSuccess(String result) {
-                response.setStatus("success");
+                if (result.equals("true")){
+                    response.setStatus("success");
+                }else{
+                    response.setStatus("failed");
+                }
                 saveToDb(response);
             }
 
