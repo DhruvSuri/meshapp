@@ -100,12 +100,28 @@ public class SocketService {
         }
 
         SocketIOClient client = node.getClient();
-        client.sendEvent(WebView, url);
+
+
         ProxyResponse response = new ProxyResponse();
         response.setRequestUrl(url);
         response.setMobileNumber(node.getMobileNumber());
         response.setRequestSentAt(new Date().getTime());
-        saveToDb(response);
+
+
+        client.sendEvent(WebView, new AckCallback<String>(String.class, 10) {
+            @Override
+            public void onSuccess(String result) {
+                response.setStatus("success");
+                saveToDb(response);
+            }
+
+            @Override
+            public void onTimeout() {
+                response.setStatus("timeout");
+                saveToDb(response);
+            }
+        }, url);
+
         return response;
     }
 
@@ -227,6 +243,15 @@ public class SocketService {
 
     public String getConnections() {
         return "Size = " + list.size() + "\n\n" + list.toString();
+    }
+
+    public static void main(String args[]){
+        ProxyResponse response = new ProxyResponse();
+        response.setRequestUrl("tesst");
+        response.setMobileNumber("9052000970");
+        response.setRequestSentAt(new Date().getTime());
+        new SocketService().saveToDb(response);
+        System.out.println(response);
     }
 }
 

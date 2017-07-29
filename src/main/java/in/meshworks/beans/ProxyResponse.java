@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @Document
 public class ProxyResponse {
-
+    private String id;
     private String name;
     private String mobileNumber;
     private int responseCode;
@@ -25,8 +25,17 @@ public class ProxyResponse {
     private long responseReceivedAt;
 
     private long dataUsed;
+    private String status;
 
     public ProxyResponse() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -115,6 +124,14 @@ public class ProxyResponse {
 
     public void setDataUsed(long dataUsed) {
         this.dataUsed = dataUsed;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
