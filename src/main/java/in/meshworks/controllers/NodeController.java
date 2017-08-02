@@ -25,7 +25,8 @@ public class NodeController {
 
     @RequestMapping(value = "verifyOTP", method = RequestMethod.GET)
     public ResponseEntity<Profile> verifyOTP(@RequestParam("mobileNumber") String mobileNumber, @RequestParam("token") String token) {
-        return profileService.verifyOTP(mobileNumber, token);
+//        Receiving complete SMS in tokeken
+        return profileService.verifyOTP(mobileNumber, token.substring(0,4));
     }
 
     @RequestMapping(value = "initiateProfile", method = RequestMethod.GET)

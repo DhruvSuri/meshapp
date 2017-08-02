@@ -210,6 +210,7 @@ public class SocketService {
             return;
         }
         SocketIOClient client = node.getClient();
+        log.info("Sending Nibs to  " + node.getMobileNumber());
         Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
         int nibs = profile.getNibsCount();
         int referralCount = profile.getReferralCount();
@@ -247,15 +248,6 @@ public class SocketService {
 
     public String getConnections() {
         return "Size = " + list.size() + "\n\n" + list.toString();
-    }
-
-    public static void main(String args[]){
-        ProxyResponse response = new ProxyResponse();
-        response.setRequestUrl("tesst");
-        response.setMobileNumber("9052000970");
-        response.setRequestSentAt(new Date().getTime());
-        new SocketService().saveToDb(response);
-        System.out.println(response);
     }
 }
 
