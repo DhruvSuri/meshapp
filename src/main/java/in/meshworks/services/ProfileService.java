@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,16 +26,23 @@ public class ProfileService {
 
     @Autowired
     OTPService otpService;
-
-    public void createOrUpdateProfile(String name, String mobileNumber, String referral) {
-        Profile profile = null;
-        try {
-            profile = new Profile(name, mobileNumber, referral);
-            mongoFactory.getMongoTemplate().save(profile);
-        } catch (Exception failed) {
-            failed.printStackTrace();
-            log.error(failed.getMessage() + "Failed to save profile " + profile);
+    public ResponseEntity<Boolean> updateProfile(final String name, final String mobileNumber, final String referral) {
+        Profile profile = findByMobileNumber(mobileNumber);
+        if (profile == null) {
+            return ResponseEntity.badRequest().body(false);
         }
+
+        profile.setName(name);
+        profile.setReferralNumber(referral);
+        try {
+            mongoFactory.getMongoTemplate().save(profile);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage() + " Failed to save profile: " + profile);
+        }
+
+        return ResponseEntity.ok(true);
     }
 
     public int getNibsCount(String mobilNumber) {
@@ -41,30 +50,42 @@ public class ProfileService {
         return profileFetched.getNibsCount();
     }
 
-    public Profile verifyOTP(String mobileNumber, String token) {
+    public ResponseEntity<Profile> verifyOTP(final String mobileNumber, final String token) {
         Profile profile = findByMobileNumber(mobileNumber);
-        if (profile.getLatestOTP().equals(token)){
-            return profile;
+        if (profile == null) {
+            return ResponseEntity.notFound().build();
         }
-        return null;
+
+        if (profile.getLatestOTP().equals(token)) {
+            return ResponseEntity.ok(profile);
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
     }
 
-    public void initiateProfile(String mobileNumber, String deviceId) {
+    public ResponseEntity<Boolean> initiateProfile(final String mobileNumber, final String deviceId) {
         String otp = otpService.sendOTP(mobileNumber);
+        if (otp == null) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
         Profile profile = findByMobileNumber(mobileNumber);
         if (profile == null){
-            createOrUpdateProfile("",mobileNumber,"");
+            profile = new Profile(null, mobileNumber, null, deviceId);
         }
-        saveLatestOTP(mobileNumber,otp);
+        profile.setLatestOTP(otp);
+        mongoFactory.getMongoTemplate().save(profile);
+        return ResponseEntity.ok(true);
     }
 
-    public Profile findByMobileNumber(String mobileNumber){
+    public Profile findByMobileNumber(final String mobileNumber){
         Query query = new Query();
         query.addCriteria(Criteria.where("mobileNumber").is(mobileNumber));
         return mongoFactory.getMongoTemplate().findOne(query, Profile.class);
     }
 
-    private void saveLatestOTP(String mobileNumber, String otp){
+    private void saveLatestOTP(final String mobileNumber, final String otp){
         Profile profile = findByMobileNumber(mobileNumber);
         profile.setLatestOTP(otp);
         mongoFactory.getMongoTemplate().save(profile);

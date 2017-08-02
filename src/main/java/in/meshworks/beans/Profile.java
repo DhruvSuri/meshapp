@@ -23,7 +23,7 @@ public class Profile {
     public Profile() {
     }
 
-    public Profile(String name, String mobileNumber, String referral) {
+    public Profile(String name, String mobileNumber, String referral, String deviceId) {
         this.name = name;
         this.mobileNumber = mobileNumber;
         this.deviceId = deviceId;

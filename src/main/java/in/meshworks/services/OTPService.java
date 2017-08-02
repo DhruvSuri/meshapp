@@ -2,6 +2,7 @@ package in.meshworks.services;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -22,11 +23,12 @@ public class OTPService {
                 .header("content-type", "application/x-www-form-urlencoded")
                 .build();
         try {
-            client.newCall(request).execute();
+            Response response = client.newCall(request).execute();
+            return response.isSuccessful() ? "" + code : null;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return code + "";
+        return null;
     }
 
     private int randomPin() {

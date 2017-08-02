@@ -1,8 +1,6 @@
 package in.meshworks.controllers;
 
-import in.meshworks.beans.ProxyResponse;
 import in.meshworks.services.ProxyService;
-import in.meshworks.services.SocketService;
 import in.meshworks.services.ViewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
