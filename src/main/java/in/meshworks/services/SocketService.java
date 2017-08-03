@@ -24,6 +24,7 @@ public class SocketService {
     private final String WebView = "webview";
     private final String ProfileEvent = "profile";
     private final String stats = "stats";
+    private final String DataConsumptionEvent = "datastats";
     private static SocketIOServer server;
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
@@ -91,6 +92,71 @@ public class SocketService {
                 break;
             }
         }
+    }
+
+    public void updateDataConsumptionStats() {
+        for(Node node : list) {
+            SocketIOClient client = node.getClient();
+            if (isValidNode(node, "1.11")) {
+                updateDataConsumptionStats(node);
+            }
+        }
+    }
+
+    private boolean isValidNode(Node node, String minAppVersion) {
+        return node != null &&
+                node.getClient() != null && node.getClient().isChannelOpen() &&
+                node.getMobileNumber() != null && !node.getMobileNumber().trim().equals("") &&
+                node.getVersion() != null && node.getVersion().compareTo(minAppVersion) >= 0;
+    }
+
+    private void updateDataConsumptionStats(Node node) {
+        int timeoutInSeconds = 5;
+        node.getClient().sendEvent(DataConsumptionEvent, new AckCallback<String>(String.class, timeoutInSeconds) {
+            @Override
+            public void onSuccess(String result) {
+                DataStat dataStat = AzazteUtils.fromJson(result, DataStat.class);
+                Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
+                updateDataConsumptionStats(dataStat, profile);
+                updateNibs(profile);
+            }
+
+            @Override
+            public void onTimeout() {
+                log.debug("[DATA CONSUMPTION STATS] Timed out for DataConsumptionEvent for Node: " + node);
+            }
+        });
+
+        Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
+        node.getClient().sendEvent(ProfileEvent, AzazteUtils.toJson(profile));
+    }
+
+    private void updateDataConsumptionStats(DataStat dataStat, Profile profile) {
+        if (dataStat != null && profile != null) {
+            long totalBytes = dataStat.getReceivedBytes() + dataStat.getSentBytes();
+            if (profile.getPreviousDataConsumption() == null) {
+                profile.setPreviousDataConsumption(0l);
+            }
+            if (profile.getCurrentDataConsumption() != null && profile.getCurrentDataConsumption() > totalBytes) {
+                profile.setPreviousDataConsumption(profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption());
+            }
+            profile.setCurrentDataConsumption(totalBytes);
+            profileService.updateProfile(profile);
+        }
+    }
+
+    /**
+     * 500 Mb ~ 30 NIBS
+     * i.e.,
+     * 500 * 1024 * 1024 bytes ~ 30 NIBS
+     * x bytes = (30 * x) / 500 * 1024 * 1024 NIBS
+     * @param profile
+     */
+    private void updateNibs(Profile profile) {
+        long totalDataConsumption = profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption();
+        profile.setNibsActual((30.0f * totalDataConsumption) / (500 * 1024 * 1024));
+        profile.setNibsCount((int)profile.getNibsActual());
+        profileService.updateProfile(profile);
     }
 
     public ProxyResponse webviewRequest(final String url) {
@@ -200,8 +266,6 @@ public class SocketService {
                 }
             }
         }
-
-
     }
 
     public void sendNibsRequest() {

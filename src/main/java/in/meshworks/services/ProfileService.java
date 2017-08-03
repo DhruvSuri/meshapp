@@ -34,6 +34,7 @@ public class ProfileService {
 
         profile.setName(name);
         profile.setReferralNumber(referral);
+        profile.setPreviousDataConsumption(0l);
         try {
             mongoFactory.getMongoTemplate().save(profile);
         }
@@ -43,6 +44,16 @@ public class ProfileService {
         }
 
         return ResponseEntity.ok(true);
+    }
+
+    public void updateProfile(final Profile profile) {
+        try {
+            mongoFactory.getMongoTemplate().save(profile);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage() + " Failed to update Profile: " + profile);
+        }
     }
 
     public int getNibsCount(String mobilNumber) {
@@ -57,6 +68,8 @@ public class ProfileService {
         }
 
         if (profile.getLatestOTP().equals(token)) {
+            profile.setVerified(true);
+            updateProfile(profile);
             return ResponseEntity.ok(profile);
         }
         else {

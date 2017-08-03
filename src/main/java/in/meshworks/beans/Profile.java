@@ -16,9 +16,12 @@ public class Profile {
     private String deviceId;
     private String referralNumber;
     private int nibsCount;
+    private float nibsActual;
     private int referralCount;
     private boolean isVerified;
     private String latestOTP;
+    private Long previousDataConsumption;
+    private Long currentDataConsumption;
 
     public Profile() {
     }
@@ -106,6 +109,30 @@ public class Profile {
 
     public void setReferralCount(int referralCount) {
         this.referralCount = referralCount;
+    }
+
+    public Long getPreviousDataConsumption() {
+        return previousDataConsumption;
+    }
+
+    public void setPreviousDataConsumption(Long previousDataConsumption) {
+        this.previousDataConsumption = previousDataConsumption;
+    }
+
+    public Long getCurrentDataConsumption() {
+        return currentDataConsumption;
+    }
+
+    public void setCurrentDataConsumption(Long currentDataConsumption) {
+        this.currentDataConsumption = currentDataConsumption;
+    }
+
+    public float getNibsActual() {
+        return nibsActual;
+    }
+
+    public void setNibsActual(float nibsActual) {
+        this.nibsActual = nibsActual;
     }
 
     @Override

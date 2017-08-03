@@ -17,19 +17,27 @@ import java.util.Date;
  */
 @Component
 public class Scheduler {
-    private static final Logger log = LoggerFactory.getLogger(Scheduler.class);
+
     @Autowired
     SocketService socketService;
 
     @Autowired
-    ProxyService proxyService;
-
-    @Autowired
     ProfileService profileService;
 
+    /**
+     * To be run every 1 min ~ 1 * 60 * 1000 ms
+     */
     @Scheduled(fixedRate = 10000)
     public void monitorConnections(){
         socketService.sendNibsRequest();
+    }
+
+    /**
+     * To be run every 10 mins ~ 10 * 60 * 1000 ms
+     */
+    @Scheduled(fixedRate = 600000)
+    public void updateDataConsumptionStats(){
+        socketService.updateDataConsumptionStats();
     }
 
     @Scheduled(fixedRate = 21600000)

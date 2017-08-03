@@ -60,6 +60,14 @@ public class Node {
         this.mobileNumber = mobileNumber;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     @Override
     public String toString() {
         return "{" +
