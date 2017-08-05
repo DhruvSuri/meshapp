@@ -114,7 +114,7 @@ public class ProfileService {
             for (ProxyResponse response : responses) {
                 count += response.getDataUsed();
             }
-            profile.setNibsCount(getNibsFromBytes(count));
+//            profile.setNibsCount(getNibsFromBytes(count));
 
             query = new Query();
             query.addCriteria(Criteria.where("referralNumber").is(profile.getMobileNumber()));
@@ -130,6 +130,6 @@ public class ProfileService {
         nibs = nibs / 1000;
         nibs = nibs / 1000;
         nibs = nibs / 1000;
-        return nibs +1;
+        return nibs;
     }
 }
