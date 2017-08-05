@@ -12,12 +12,12 @@ import java.io.IOException;
  */
 @Service
 public class OTPService {
-    private static String API_KEY = "8714c416-529c-11e7-94da-0200cd936042";
+    private static String API_KEY = "168153Af6mUytiO59822219";
 
     public String sendOTP(String phone) {
         OkHttpClient client = new OkHttpClient();
         int code = randomPin();
-        String url = String.format("https://2factor.in/API/V1/%s/SMS/%s/%s", API_KEY, phone, code);
+        String url = String.format("http://api.msg91.com/api/sendotp.php?authkey=%s&mobile=%s&message=%s is your OTP for Retonet&sender=RETONT&otp=%s", API_KEY, phone, code, code);
         Request request = new Request.Builder()
                 .url(url)
                 .header("content-type", "application/x-www-form-urlencoded")
