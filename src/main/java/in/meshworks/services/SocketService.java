@@ -84,6 +84,12 @@ public class SocketService {
         tt.start();
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        server.stop();
+    }
+
     private void removeFromList(UUID sessionID) {
         for (Node node : list) {
             if (node.getSessionID() == sessionID) {
