@@ -143,7 +143,7 @@ public class SocketService {
             if (profile.getPreviousDataConsumption() == null) {
                 profile.setPreviousDataConsumption(0l);
             }
-            if (profile.getCurrentDataConsumption() != null && profile.getCurrentDataConsumption() > totalBytes) {
+            if (profile.getCurrentDataConsumption() != null && totalBytes > 0 && profile.getCurrentDataConsumption() > totalBytes) {
                 profile.setPreviousDataConsumption(profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption());
             }
             profile.setCurrentDataConsumption(totalBytes);
