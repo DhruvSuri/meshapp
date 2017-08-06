@@ -140,14 +140,16 @@ public class SocketService {
     private void updateDataConsumptionStats(DataStat dataStat, Profile profile) {
         if (dataStat != null && profile != null) {
             long totalBytes = dataStat.getReceivedBytes() + dataStat.getSentBytes();
-            if (profile.getPreviousDataConsumption() == null) {
-                profile.setPreviousDataConsumption(0l);
+            if (totalBytes > 0) {
+                if (profile.getPreviousDataConsumption() == null) {
+                    profile.setPreviousDataConsumption(0l);
+                }
+                if (profile.getCurrentDataConsumption() != null && profile.getCurrentDataConsumption() > totalBytes) {
+                    profile.setPreviousDataConsumption(profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption());
+                }
+                profile.setCurrentDataConsumption(totalBytes);
+                profileService.updateProfile(profile);
             }
-            if (profile.getCurrentDataConsumption() != null && totalBytes > 0 && profile.getCurrentDataConsumption() > totalBytes) {
-                profile.setPreviousDataConsumption(profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption());
-            }
-            profile.setCurrentDataConsumption(totalBytes);
-            profileService.updateProfile(profile);
         }
     }
 
