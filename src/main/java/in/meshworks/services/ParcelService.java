@@ -12,7 +12,7 @@ import java.util.Set;
  * Created by dhruv.suri on 28/07/17.
  */
 @Service
-public class ViewService {
+public class ParcelService {
 
     @Autowired
     SocketService socketService;

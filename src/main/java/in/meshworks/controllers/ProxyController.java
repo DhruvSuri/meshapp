@@ -1,7 +1,7 @@
 package in.meshworks.controllers;
 
 import in.meshworks.services.ProxyService;
-import in.meshworks.services.ViewService;
+import in.meshworks.services.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,7 +20,7 @@ public class ProxyController {
     ProxyService proxyService;
 
     @Autowired
-    ViewService viewService;
+    ParcelService viewService;
 
     @RequestMapping(value = "temp", method = RequestMethod.GET)
     public ResponseEntity<Object> webview() {
