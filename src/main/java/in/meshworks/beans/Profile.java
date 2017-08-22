@@ -114,6 +114,9 @@ public class Profile {
     }
 
     public Long getPreviousDataConsumption() {
+        if (previousDataConsumption == null) {
+            return 0l;
+        }
         return previousDataConsumption;
     }
 
@@ -122,6 +125,9 @@ public class Profile {
     }
 
     public Long getCurrentDataConsumption() {
+        if (currentDataConsumption == null) {
+            return 0l;
+        }
         return currentDataConsumption;
     }
 
