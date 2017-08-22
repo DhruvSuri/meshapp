@@ -25,17 +25,9 @@ public class Scheduler {
     ProfileService profileService;
 
     /**
-     * To be run every 1 min ~ 1 * 60 * 1000 ms
+     * To be run every 5mins = 5 * 60 * 1000
      */
-    @Scheduled(fixedRate = 60000)
-    public void monitorConnections(){
-        socketService.sendNibsRequest();
-    }
-
-    /**
-     * To be run every 10 seconds
-     */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 300000)
     public void updateDataConsumptionStats(){
         socketService.updateDataConsumptionStats();
     }

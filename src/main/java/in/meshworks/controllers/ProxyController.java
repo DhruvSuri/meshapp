@@ -22,6 +22,13 @@ public class ProxyController {
     @Autowired
     ViewService viewService;
 
+    @RequestMapping(value = "temp", method = RequestMethod.GET)
+    public ResponseEntity<Object> webview() {
+        viewService.temp();
+
+        return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
+    }
+
     @RequestMapping(value = "view", method = RequestMethod.GET)
     public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span) {
         if (url == null || url.isEmpty()) {

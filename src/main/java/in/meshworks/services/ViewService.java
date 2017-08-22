@@ -13,6 +13,7 @@ import java.util.Set;
  */
 @Service
 public class ViewService {
+
     @Autowired
     SocketService socketService;
 
