@@ -24,8 +24,6 @@ public class ProxyController {
 
     @RequestMapping(value = "temp", method = RequestMethod.GET)
     public ResponseEntity<Object> webview() {
-        viewService.temp();
-
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }
 
