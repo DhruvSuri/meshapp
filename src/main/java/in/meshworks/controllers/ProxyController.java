@@ -28,12 +28,12 @@ public class ProxyController {
     }
 
     @RequestMapping(value = "view", method = RequestMethod.GET)
-    public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span) {
+    public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span, @RequestParam("parcelId") String parcelId) {
         if (url == null || url.isEmpty()) {
             return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        viewService.generateViews(url, views, span);
+        viewService.generateViews(url, views, span, parcelId);
 
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }

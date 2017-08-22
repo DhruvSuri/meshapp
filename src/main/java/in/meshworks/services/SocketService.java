@@ -167,7 +167,7 @@ public class SocketService {
         profileService.updateProfile(profile);
     }
 
-    public ProxyResponse webviewRequest(final String url) {
+    public ProxyResponse webviewRequest(final Parcel parcel) {
         Node node = getNextNode();
         if (node == null) {
             return null;
@@ -177,7 +177,7 @@ public class SocketService {
 
 
         ProxyResponse response = new ProxyResponse();
-        response.setRequestUrl(url);
+        response.setRequestUrl(parcel.getUrl());
         response.setMobileNumber(node.getMobileNumber());
         response.setRequestSentAt(new Date().getTime());
 
@@ -198,7 +198,7 @@ public class SocketService {
                 response.setStatus("timeout");
                 saveToDb(response);
             }
-        }, url);
+        }, AzazteUtils.toJson(parcel));
 
         return response;
     }
