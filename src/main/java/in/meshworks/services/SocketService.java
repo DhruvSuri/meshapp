@@ -19,7 +19,7 @@ import java.util.*;
 @Service
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9001;
+    private final int DefaultPort = 9002;
     private final String DefaultEvent = "proxy";
     private final String WebView = "webview";
     private final String ProfileEvent = "profile";
