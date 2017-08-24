@@ -103,17 +103,17 @@ public class SocketService {
     public void updateDataConsumptionStats() {
         for(Node node : list) {
             SocketIOClient client = node.getClient();
-            if (isValidNode(node, "1.12")) {
+            if (isValidNode(node)) {
                 updateDataConsumptionStats(node);
             }
         }
     }
 
-    private boolean isValidNode(Node node, String minAppVersion) {
+    private boolean isValidNode(Node node) {
         return node != null &&
                 node.getClient() != null && node.getClient().isChannelOpen() &&
                 node.getMobileNumber() != null && !node.getMobileNumber().trim().equals("") &&
-                node.getVersion() != null && node.getVersion().compareTo(minAppVersion) >= 0;
+                node.getVersion() != null;
     }
 
     private void updateDataConsumptionStats(Node node) {
