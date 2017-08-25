@@ -26,6 +26,7 @@ public class ProfileService {
 
     @Autowired
     OTPService otpService;
+
     public ResponseEntity<Boolean> updateProfile(final String name, final String mobileNumber, final String referral) {
         Profile profile = findByMobileNumber(mobileNumber);
         if (profile == null) {
@@ -41,6 +42,24 @@ public class ProfileService {
         catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage() + " Failed to save profile: " + profile);
+        }
+
+        return ResponseEntity.ok(true);
+    }
+
+    public ResponseEntity<Boolean> updateToken(final String mobileNumber, final String token) {
+        Profile profile = findByMobileNumber(mobileNumber);
+        if (profile == null) {
+            return ResponseEntity.badRequest().body(false);
+        }
+
+        profile.setFcmToken(token);
+        try {
+            mongoFactory.getMongoTemplate().save(profile);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            log.error(ex.getMessage() + " Failed to save fcm token for profile: " + profile);
         }
 
         return ResponseEntity.ok(true);
@@ -110,11 +129,6 @@ public class ProfileService {
             Query query = new Query();
             query.addCriteria(Criteria.where("mobileNumber").is(profile.getMobileNumber()));
             List<ProxyResponse> responses = mongoFactory.getMongoTemplate().find(query, ProxyResponse.class);
-            int count = 0;
-            for (ProxyResponse response : responses) {
-                count += response.getDataUsed();
-            }
-//            profile.setNibsCount(getNibsFromBytes(count));
 
             query = new Query();
             query.addCriteria(Criteria.where("referralNumber").is(profile.getMobileNumber()));
@@ -124,12 +138,8 @@ public class ProfileService {
         }
     }
 
-    public int getNibsFromBytes(int count){
-        int nibs = 60;
-        nibs = nibs * count;
-        nibs = nibs / 1000;
-        nibs = nibs / 1000;
-        nibs = nibs / 1000;
-        return nibs;
+    public List<Profile> getAllProfiles() {
+        return mongoFactory.getMongoTemplate().findAll(Profile.class);
     }
+
 }

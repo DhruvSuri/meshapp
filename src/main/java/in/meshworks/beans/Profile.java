@@ -24,6 +24,7 @@ public class Profile {
     private String latestOTP;
     private Long previousDataConsumption;
     private Long currentDataConsumption;
+    private String fcmToken;
 
     public Profile() {
     }
@@ -157,6 +158,14 @@ public class Profile {
 
     public void setRedeemThreshold(int redeemThreshold) {
         this.redeemThreshold = redeemThreshold;
+    }
+
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setFcmToken(String fcmToken) {
+        this.fcmToken = fcmToken;
     }
 
     @Override
