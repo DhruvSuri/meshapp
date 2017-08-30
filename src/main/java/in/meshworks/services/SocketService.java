@@ -19,12 +19,11 @@ import java.util.*;
 @Service
 public class SocketService {
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9002;
+    private final int DefaultPort = 9003;
     private final String DefaultEvent = "proxy";
-    private final String WebView = "webview";
+    private final String WebView = "webView";
     private final String ProfileEvent = "profile";
-    private final String stats = "stats";
-    private final String DataConsumptionEvent = "datastats";
+    private final String DataConsumptionEvent = "dataStats";
     private static SocketIOServer server;
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
@@ -139,15 +138,13 @@ public class SocketService {
 
     private void updateDataConsumptionStats(DataStat dataStat, Profile profile) {
         if (dataStat != null && profile != null) {
-            long totalBytes = dataStat.getReceivedBytes() + dataStat.getSentBytes();
-            if (totalBytes > 0) {
-                if (profile.getPreviousDataConsumption() == null) {
-                    profile.setPreviousDataConsumption(0l);
+            long dataInBytes = dataStat.getDataInBytes();
+            if (dataInBytes > 0) {
+                if (profile.getCurrentDataConsumption() == null) {
+                    profile.setCurrentDataConsumption(0l);
                 }
-                if (profile.getCurrentDataConsumption() != null && profile.getCurrentDataConsumption() > totalBytes) {
-                    profile.setPreviousDataConsumption(profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption());
-                }
-                profile.setCurrentDataConsumption(totalBytes);
+
+                profile.setCurrentDataConsumption(profile.getCurrentDataConsumption() + dataInBytes);
                 profileService.updateProfile(profile);
             }
         }
@@ -161,10 +158,11 @@ public class SocketService {
      * @param profile
      */
     private void updateNibs(Profile profile) {
-        long totalDataConsumption = profile.getPreviousDataConsumption() + profile.getCurrentDataConsumption();
-        profile.setNibsActual((30.0f * totalDataConsumption) / (500 * 1024 * 1024));
-        profile.setNibsCount((int)profile.getNibsActual());
-        profileService.updateProfile(profile);
+        if (profile.getCurrentDataConsumption() != null) {
+            profile.setNibsActual((30.0f * profile.getCurrentDataConsumption()) / (500 * 1024 * 1024));
+            profile.setNibsCount((int)profile.getNibsActual());
+            profileService.updateProfile(profile);
+        }
     }
 
     public ProxyResponse webviewRequest(final Parcel parcel) {

@@ -5,33 +5,23 @@ package in.meshworks.beans;
  */
 public class DataStat {
 
-    private long receivedBytes;
-    private long sentBytes;
+    private long dataInBytes;
 
     public DataStat() {
     }
 
-    public long getReceivedBytes() {
-        return receivedBytes;
+    public long getDataInBytes() {
+        return dataInBytes;
     }
 
-    public void setReceivedBytes(long receivedBytes) {
-        this.receivedBytes = receivedBytes;
-    }
-
-    public long getSentBytes() {
-        return sentBytes;
-    }
-
-    public void setSentBytes(long sentBytes) {
-        this.sentBytes = sentBytes;
+    public void setDataInBytes(long dataInBytes) {
+        this.dataInBytes = dataInBytes;
     }
 
     @Override
     public String toString() {
         return "DataStat{" +
-                "receivedBytes=" + receivedBytes +
-                ", sentBytes=" + sentBytes +
+                "dataInBytes=" + dataInBytes +
                 '}';
     }
 }
