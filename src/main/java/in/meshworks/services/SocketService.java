@@ -112,7 +112,7 @@ public class SocketService {
         return node != null &&
                 node.getClient() != null && node.getClient().isChannelOpen() &&
                 node.getMobileNumber() != null && !node.getMobileNumber().trim().equals("") &&
-                node.getVersion() != null;
+                node.getVersion() != null && node.getVersion().compareTo("3.1.0") >= 0;
     }
 
     private void updateDataConsumptionStats(Node node) {

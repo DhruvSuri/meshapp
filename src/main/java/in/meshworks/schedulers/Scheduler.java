@@ -27,7 +27,7 @@ public class Scheduler {
     /**
      * To be run every 5mins = 5 * 60 * 1000
      */
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 300000)
     public void updateDataConsumptionStats(){
         socketService.updateDataConsumptionStats();
     }
