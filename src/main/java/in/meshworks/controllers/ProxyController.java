@@ -1,5 +1,6 @@
 package in.meshworks.controllers;
 
+import in.meshworks.services.DomainHandler;
 import in.meshworks.services.ProxyService;
 import in.meshworks.services.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class ProxyController {
     @Autowired
     ParcelService viewService;
 
+    @Autowired
+    DomainHandler domainService;
+
     @RequestMapping(value = "temp", method = RequestMethod.GET)
     public ResponseEntity<Object> webview() {
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
@@ -43,6 +47,10 @@ public class ProxyController {
     public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
         if (timeout == null) {
             timeout = 30;
+        }
+
+        if (!domainService.isValidDomain(url)){
+            return new ResponseEntity<Object>("Invalid Domain", HttpStatus.BAD_REQUEST);
         }
 
         if (url == null || url.isEmpty()) {
@@ -70,11 +78,18 @@ public class ProxyController {
         return proxyService.list();
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "addHost")
+    public void addHost(@RequestParam("url") String url) {
+        domainService.addDomain(url);
+    }
 
-//    @RequestMapping(value = "proxy", method = RequestMethod.POST, consumes = "application/x-www-form-urlencoded")
-//    public String proxyPOSTXml(@RequestBody String requestBodyString, @RequestParam("url") String url) {
-//        return "done";
-//    }
+    @RequestMapping(method = RequestMethod.GET, value = "getHosts")
+    public String getHosts() {
+        return domainService.getValidDomains();
+    }
 
-
+    @RequestMapping(method = RequestMethod.GET, value = "resetHosts")
+    public String resetHosts() {
+        return domainService.resetHosts();
+    }
 }
