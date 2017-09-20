@@ -19,7 +19,7 @@ public class ExternalService {
     @Autowired
     OTPService otpService;
 
-    public ResponseEntity<Boolean> otp(String mobileNumber, String source, String sender, String msg) {
+    public ResponseEntity<String> otp(String mobileNumber, String source, String sender, String msg) {
         String otp = otpService.sendOTP(mobileNumber, sender, msg);
         ExternalProfile profile = findByMobileNumber(mobileNumber);
         if (profile == null) {
@@ -28,7 +28,7 @@ public class ExternalService {
         profile.setLatestOTP(otp);
         profile.setOtpCount(profile.getOtpCount() + 1);
         mongoFactory.getMongoTemplate().save(profile);
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(otp);
     }
 
     public ExternalProfile findByMobileNumber(final String mobileNumber) {
