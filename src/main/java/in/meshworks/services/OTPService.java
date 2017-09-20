@@ -14,10 +14,10 @@ import java.io.IOException;
 public class OTPService {
     private static String API_KEY = "168153Af6mUytiO59822219";
 
-    public String sendOTP(String phone) {
+    public String sendOTP(String phone, String sender, String msg) {
         OkHttpClient client = new OkHttpClient();
         int code = randomPin();
-        String url = String.format("http://api.msg91.com/api/sendotp.php?authkey=%s&mobile=%s&message=%s is your OTP for Retonet&sender=RETONT&otp=%s", API_KEY, phone, code, code);
+        String url = String.format("http://api.msg91.com/api/sendotp.php?authkey=%s&mobile=%s&message=%s %s&sender=%s&otp=%s", API_KEY, phone, code, msg, sender, code);
         Request request = new Request.Builder()
                 .url(url)
                 .header("content-type", "application/x-www-form-urlencoded")

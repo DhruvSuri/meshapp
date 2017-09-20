@@ -38,8 +38,7 @@ public class ProfileService {
         profile.setPreviousDataConsumption(0l);
         try {
             mongoFactory.getMongoTemplate().save(profile);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage() + " Failed to save profile: " + profile);
         }
@@ -56,8 +55,7 @@ public class ProfileService {
         profile.setFcmToken(token);
         try {
             mongoFactory.getMongoTemplate().save(profile);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage() + " Failed to save fcm token for profile: " + profile);
         }
@@ -68,8 +66,7 @@ public class ProfileService {
     public void updateProfile(final Profile profile) {
         try {
             mongoFactory.getMongoTemplate().save(profile);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage() + " Failed to update Profile: " + profile);
         }
@@ -90,20 +87,19 @@ public class ProfileService {
             profile.setVerified(true);
             updateProfile(profile);
             return ResponseEntity.ok(profile);
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
     }
 
     public ResponseEntity<Boolean> initiateProfile(final String mobileNumber, final String deviceId) {
-        String otp = otpService.sendOTP(mobileNumber);
+        String otp = otpService.sendOTP(mobileNumber, "RETONT", "is your OTP for Retonet");
         if (otp == null) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
         Profile profile = findByMobileNumber(mobileNumber);
-        if (profile == null){
+        if (profile == null) {
             profile = new Profile(null, mobileNumber, null, deviceId);
         }
         profile.setLatestOTP(otp);
@@ -111,13 +107,13 @@ public class ProfileService {
         return ResponseEntity.ok(true);
     }
 
-    public Profile findByMobileNumber(final String mobileNumber){
+    public Profile findByMobileNumber(final String mobileNumber) {
         Query query = new Query();
         query.addCriteria(Criteria.where("mobileNumber").is(mobileNumber));
         return mongoFactory.getMongoTemplate().findOne(query, Profile.class);
     }
 
-    private void saveLatestOTP(final String mobileNumber, final String otp){
+    private void saveLatestOTP(final String mobileNumber, final String otp) {
         Profile profile = findByMobileNumber(mobileNumber);
         profile.setLatestOTP(otp);
         mongoFactory.getMongoTemplate().save(profile);
@@ -132,8 +128,8 @@ public class ProfileService {
 
             query = new Query();
             query.addCriteria(Criteria.where("referralNumber").is(profile.getMobileNumber()));
-            long referralCount = mongoFactory.getMongoTemplate().count(query,Profile.class);
-            profile.setReferralCount((int)referralCount);
+            long referralCount = mongoFactory.getMongoTemplate().count(query, Profile.class);
+            profile.setReferralCount((int) referralCount);
             mongoFactory.getMongoTemplate().save(profile);
         }
     }
