@@ -53,7 +53,9 @@ public class SocketService {
                     public void onConnect(SocketIOClient socketIOClient) {
                         log.debug("Connected socket : " + socketIOClient.getSessionId());
                         final Node node = new Node(socketIOClient);
-                        list.add(node);
+                        if (!isAlreadyAddedToList(node)){
+                            list.add(node);
+                        }
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
                     }
@@ -113,6 +115,15 @@ public class SocketService {
                 node.getClient() != null && node.getClient().isChannelOpen() &&
                 node.getMobileNumber() != null && !node.getMobileNumber().trim().equals("") &&
                 node.getVersion() != null && node.getVersion().compareTo("4.0.0") >= 0;
+    }
+
+    private boolean isAlreadyAddedToList(Node node) {
+        for(Node item : list) {
+            if (item.getMobileNumber().equals(node.getMobileNumber())){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateDataConsumptionStats(Node node) {
