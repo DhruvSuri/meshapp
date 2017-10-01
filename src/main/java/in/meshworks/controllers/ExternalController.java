@@ -1,6 +1,5 @@
 package in.meshworks.controllers;
 
-import in.meshworks.mongo.MongoFactory;
 import in.meshworks.services.ExternalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +16,15 @@ public class ExternalController {
 
     @Autowired
     ExternalService service;
-    @Autowired
-    MongoFactory mongoFactory;
 
     @RequestMapping(value = "otp", method = RequestMethod.GET)
-    public ResponseEntity<String> otp(@RequestParam("mobileNumber") final String mobileNumber, @RequestParam("source") final String source, @RequestParam("sender") final String sender, @RequestParam("msg") final String msg) {
-        return service.otp(mobileNumber, source, sender, msg);
+    public ResponseEntity<String> otp(
+            @RequestParam("authKey") final String authKey,
+            @RequestParam("tag") final String tag,
+            @RequestParam("mobileNumber") final String mobileNumber,
+            @RequestParam("sender") final String sender,
+            @RequestParam("msg") final String msg,
+            @RequestParam("requestKey") final String requestKey) {
+        return service.otp(authKey, tag, mobileNumber, sender, msg, requestKey);
     }
 }
