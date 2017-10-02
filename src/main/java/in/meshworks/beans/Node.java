@@ -9,7 +9,7 @@ import java.util.UUID;
  */
 public class Node {
 
-    private String mobileNumber;
+    private String uniqueKey;
     private String version;
     private Profile profile;
     private UUID sessionID;
@@ -24,7 +24,7 @@ public class Node {
     public Node(SocketIOClient client) {
         this.client = client;
         this.sessionID = client.getSessionId();
-        this.mobileNumber = client.getHandshakeData().getSingleUrlParam("userMobile");
+        this.uniqueKey = client.getHandshakeData().getSingleUrlParam("uniqueKey");
         this.version = client.getHandshakeData().getSingleUrlParam("version");
     }
 
@@ -52,12 +52,12 @@ public class Node {
         this.client = client;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
+    public String getUniqueKey() {
+        return uniqueKey;
     }
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+    public void setUniqueKey(String uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
 
     public String getVersion() {
@@ -70,9 +70,12 @@ public class Node {
 
     @Override
     public String toString() {
-        return "{" +
-                "\"mobileNumber\": \"" + mobileNumber + "\"," +
-                "\"version\": \"" + version +
-                "}";
+        return "Node{" +
+                "uniqueKey='" + uniqueKey + '\'' +
+                ", version='" + version + '\'' +
+                ", profile=" + profile +
+                ", sessionID=" + sessionID +
+                ", client=" + client +
+                '}';
     }
 }

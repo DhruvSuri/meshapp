@@ -35,8 +35,7 @@ public class ExternalService {
             profile.setOtpCount(profile.getOtpCount() + 1);
             mongoFactory.getMongoTemplate().save(profile);
             return ResponseEntity.ok(otp);
-        }
-        else {
+        } else {
             return ResponseEntity.badRequest().body("Invalid Keys");
         }
     }
@@ -62,8 +61,7 @@ public class ExternalService {
     private String digest(String data) {
         try {
             return new String(MessageDigest.getInstance("MD5").digest(data.getBytes()));
-        }
-        catch (NoSuchAlgorithmException ex) {
+        } catch (NoSuchAlgorithmException ex) {
             return "";
         }
     }

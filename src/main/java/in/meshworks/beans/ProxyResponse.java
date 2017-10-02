@@ -13,7 +13,7 @@ import java.util.Map;
 public class ProxyResponse {
     private String id;
     private String name;
-    private String mobileNumber;
+    private String uniqueKey;
     private int responseCode;
     private Map<String, List<String>> responseHeaders;
     private byte[] responseBody;
@@ -46,12 +46,12 @@ public class ProxyResponse {
         this.name = name;
     }
 
-    public String getMobileNumber() {
-        return mobileNumber;
+    public String getUniqueKey() {
+        return uniqueKey;
     }
 
-    public void setMobileNumber(String mobileNumber) {
-        this.mobileNumber = mobileNumber;
+    public void setUniqueKey(String uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
 
     public int getResponseCode() {
@@ -137,8 +137,9 @@ public class ProxyResponse {
     @Override
     public String toString() {
         return "ProxyResponse{" +
-                "name='" + name + '\'' +
-                ", mobileNumber='" + mobileNumber + '\'' +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", uniqueKey='" + uniqueKey + '\'' +
                 ", responseCode=" + responseCode +
                 ", responseHeaders=" + responseHeaders +
                 ", responseBody=" + Arrays.toString(responseBody) +
@@ -148,6 +149,7 @@ public class ProxyResponse {
                 ", responseSentAt=" + responseSentAt +
                 ", responseReceivedAt=" + responseReceivedAt +
                 ", dataUsed=" + dataUsed +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

@@ -53,7 +53,7 @@ public class SocketService {
                     public void onConnect(SocketIOClient socketIOClient) {
                         log.debug("Connected socket : " + socketIOClient.getSessionId());
                         final Node node = new Node(socketIOClient);
-                        if (!isAlreadyAddedToList(node)){
+                        if (!isAlreadyAddedToList(node)) {
                             list.add(node);
                         }
                         log.debug("Server list size : " + server.getAllClients().size());
@@ -102,7 +102,7 @@ public class SocketService {
     }
 
     public void updateDataConsumptionStats() {
-        for(Node node : list) {
+        for (Node node : list) {
             SocketIOClient client = node.getClient();
             if (isValidNode(node)) {
                 updateDataConsumptionStats(node);
@@ -113,13 +113,13 @@ public class SocketService {
     private boolean isValidNode(Node node) {
         return node != null &&
                 node.getClient() != null && node.getClient().isChannelOpen() &&
-                node.getMobileNumber() != null && !node.getMobileNumber().trim().equals("") &&
+                node.getUniqueKey() != null && !node.getUniqueKey().trim().equals("") &&
                 node.getVersion() != null && node.getVersion().compareTo("4.0.0") >= 0;
     }
 
     private boolean isAlreadyAddedToList(Node node) {
-        for(Node item : list) {
-            if (item.getMobileNumber().equals(node.getMobileNumber())){
+        for (Node item : list) {
+            if (item.getUniqueKey().equals(node.getUniqueKey())) {
                 return true;
             }
         }
@@ -132,7 +132,7 @@ public class SocketService {
             @Override
             public void onSuccess(String result) {
                 DataStat dataStat = AzazteUtils.fromJson(result, DataStat.class);
-                Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
+                Profile profile = profileService.findByMobileNumber(node.getUniqueKey());
                 updateDataConsumptionStats(dataStat, profile);
                 updateNibs(profile);
             }
@@ -143,7 +143,7 @@ public class SocketService {
             }
         });
 
-        Profile profile = profileService.findByMobileNumber(node.getMobileNumber());
+        Profile profile = profileService.findByMobileNumber(node.getUniqueKey());
         node.getClient().sendEvent(ProfileEvent, AzazteUtils.toJson(profile));
     }
 
@@ -166,12 +166,13 @@ public class SocketService {
      * i.e.,
      * 500 * 1024 * 1024 bytes ~ 30 NIBS
      * x bytes = (30 * x) / 500 * 1024 * 1024 NIBS
+     *
      * @param profile
      */
     private void updateNibs(Profile profile) {
         if (profile.getCurrentDataConsumption() != null) {
             profile.setNibsActual((30.0f * profile.getCurrentDataConsumption()) / (500 * 1024 * 1024));
-            profile.setNibsCount((int)profile.getNibsActual());
+            profile.setNibsCount((int) profile.getNibsActual());
             profileService.updateProfile(profile);
         }
     }
@@ -187,16 +188,16 @@ public class SocketService {
 
         ProxyResponse response = new ProxyResponse();
         response.setRequestUrl(parcel.getUrl());
-        response.setMobileNumber(node.getMobileNumber());
+        response.setUniqueKey(node.getUniqueKey());
         response.setRequestSentAt(new Date().getTime());
 
 
         client.sendEvent(WebView, new AckCallback<String>(String.class, 10) {
             @Override
             public void onSuccess(String result) {
-                if (result.equals("true")){
+                if (result.equals("true")) {
                     response.setStatus("success");
-                }else{
+                } else {
                     response.setStatus("failed");
                 }
                 saveToDb(response);
@@ -234,7 +235,7 @@ public class SocketService {
                         try {
                             final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
                             response.add(proxyResponse);
-                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getMobileNumber()));
+                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getUniqueKey()));
                             proxyResponse.setResponseReceivedAt(new Date().getTime());
                             proxyResponse.setRequestSentAt(requestSentAt);
                             proxyResponse.setRequestUrl(request.getUrl());
