@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 
 /**
  * Created by dhruv.suri on 20/09/17.
@@ -50,7 +53,7 @@ public class ExternalService {
         String requestPart1 = getMashedKeys(authKey, tag, mobileNumber);
 
         StringTokenizer stk = new StringTokenizer(requestKey, ".");
-        return stk.nextToken().equals(requestPart1) && validateTimeSpan(stk.nextToken(), System.currentTimeMillis());
+        return stk.nextToken().equals(requestPart1) && validateTimeSpan(stk.nextToken());
     }
 
     private String getMashedKeys(String authKey, String tag, String mobileNumber) {
@@ -66,9 +69,14 @@ public class ExternalService {
         }
     }
 
-    private boolean validateTimeSpan(String t1, long timestamp2) {
-        long timestamp1 = Long.parseLong(t1);
-        long diff = timestamp2 - timestamp1;
-        return diff >= 0 && diff < 10000;
+    private boolean validateTimeSpan(String t1) {
+        try {
+            long timestamp = Long.parseLong(t1);
+            return timestamp >= 0;
+        }
+        catch (Exception ex) {
+            return false;
+        }
+
     }
 }
