@@ -1,7 +1,7 @@
 package in.meshworks.services;
 
-import in.meshworks.beans.ProxyRequest;
-import in.meshworks.beans.ProxyResponse;
+import in.meshworks.beans.Req;
+import in.meshworks.beans.Res;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,7 +24,7 @@ public class ProxyService {
     RequestResponseService requestResponseService;
 
     public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod, boolean headersAllowed) {
-        ProxyRequest proxyRequest;
+        Req proxyRequest;
         switch (httpMethod) {
             case GET:
                 proxyRequest = requestResponseService.buildGetRequest(url, headers);
@@ -38,7 +38,7 @@ public class ProxyService {
         if (!headersAllowed) {
             proxyRequest.setHeaders(new HashMap<>());
         }
-        ProxyResponse proxyResponse = socketService.getProxyResponse(proxyRequest, timeout);
+        Res proxyResponse = socketService.getProxyResponse(proxyRequest, timeout);
         if (proxyResponse == null) {
             return new ResponseEntity<>("No nodes available", HttpStatus.SERVICE_UNAVAILABLE);
         }

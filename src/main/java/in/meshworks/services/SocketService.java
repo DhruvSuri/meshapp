@@ -1,11 +1,16 @@
 package in.meshworks.services;
 
-import in.meshworks.beans.*;
-import in.meshworks.mongo.MongoFactory;
-import in.meshworks.utils.AzazteUtils;
-import com.corundumstudio.socketio.*;
+import com.corundumstudio.socketio.AckCallback;
+import com.corundumstudio.socketio.Configuration;
+import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import in.meshworks.beans.Node;
+import in.meshworks.beans.Req;
+import in.meshworks.beans.Res;
+import in.meshworks.mongo.MongoFactory;
+import in.meshworks.utils.AzazteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,21 +23,16 @@ import java.util.*;
  */
 @Service
 public class SocketService {
+
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9004;
-    private final String DefaultEvent = "proxy";
-    private final String WebView = "webView";
-    private final String ProfileEvent = "profile";
-    private final String DataConsumptionEvent = "dataStats";
+    private final int DefaultPort = 9000;
+    private final String DefaultEvent = "factor";
     private static SocketIOServer server;
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
 
     @Autowired
     MongoFactory mongoFactory;
-
-    @Autowired
-    ProfileService profileService;
 
     public SocketService() {
         Thread tt = new Thread() {
@@ -41,7 +41,7 @@ public class SocketService {
                 log.debug("Starting server");
                 Configuration config = new Configuration();
                 config.setPingInterval(5000);
-                config.setPingTimeout(30000);
+                config.setPingTimeout(10000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(DefaultPort);
@@ -53,6 +53,13 @@ public class SocketService {
                     public void onConnect(SocketIOClient socketIOClient) {
                         log.debug("Connected socket : " + socketIOClient.getSessionId());
                         final Node node = new Node(socketIOClient);
+                        try {
+                            Thread.currentThread().sleep(500);
+                        }
+                        catch (InterruptedException ex) {
+                            ex.printStackTrace();
+                        }
+
                         if (!isAlreadyAddedToList(node)) {
                             list.add(node);
                         }
@@ -101,125 +108,28 @@ public class SocketService {
         }
     }
 
-    public void updateDataConsumptionStats() {
-        for (Node node : list) {
-            SocketIOClient client = node.getClient();
-            if (isValidNode(node)) {
-                updateDataConsumptionStats(node);
-            }
-        }
-    }
-
     private boolean isValidNode(Node node) {
         return node != null &&
                 node.getClient() != null && node.getClient().isChannelOpen() &&
-                node.getUniqueKey() != null && !node.getUniqueKey().trim().equals("") &&
+                node.getUniqueID() != null && !node.getUniqueID().trim().equals("") &&
                 node.getVersion() != null && node.getVersion().compareTo("4.0.0") >= 0;
     }
 
     private boolean isAlreadyAddedToList(Node node) {
         for (Node item : list) {
-            if (item.getUniqueKey().equals(node.getUniqueKey())) {
+            if (item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
             }
         }
         return false;
     }
 
-    private void updateDataConsumptionStats(Node node) {
-        int timeoutInSeconds = 5;
-        node.getClient().sendEvent(DataConsumptionEvent, new AckCallback<String>(String.class, timeoutInSeconds) {
-            @Override
-            public void onSuccess(String result) {
-                DataStat dataStat = AzazteUtils.fromJson(result, DataStat.class);
-                Profile profile = profileService.findByMobileNumber(node.getUniqueKey());
-                updateDataConsumptionStats(dataStat, profile);
-                updateNibs(profile);
-            }
-
-            @Override
-            public void onTimeout() {
-                log.debug("[DATA CONSUMPTION STATS] Timed out for DataConsumptionEvent for Node: " + node);
-            }
-        });
-
-        Profile profile = profileService.findByMobileNumber(node.getUniqueKey());
-        node.getClient().sendEvent(ProfileEvent, AzazteUtils.toJson(profile));
-    }
-
-    private void updateDataConsumptionStats(DataStat dataStat, Profile profile) {
-        if (dataStat != null && profile != null) {
-            long dataInBytes = dataStat.getDataInBytes();
-            if (dataInBytes > 0) {
-                if (profile.getCurrentDataConsumption() == null) {
-                    profile.setCurrentDataConsumption(0l);
-                }
-
-                profile.setCurrentDataConsumption(profile.getCurrentDataConsumption() + dataInBytes);
-                profileService.updateProfile(profile);
-            }
-        }
-    }
-
-    /**
-     * 500 Mb ~ 30 NIBS
-     * i.e.,
-     * 500 * 1024 * 1024 bytes ~ 30 NIBS
-     * x bytes = (30 * x) / 500 * 1024 * 1024 NIBS
-     *
-     * @param profile
-     */
-    private void updateNibs(Profile profile) {
-        if (profile.getCurrentDataConsumption() != null) {
-            profile.setNibsActual((30.0f * profile.getCurrentDataConsumption()) / (500 * 1024 * 1024));
-            profile.setNibsCount((int) profile.getNibsActual());
-            profileService.updateProfile(profile);
-        }
-    }
-
-    public ProxyResponse webviewRequest(final Parcel parcel) {
-        Node node = getNextNode();
-        if (node == null) {
-            return null;
-        }
-
-        SocketIOClient client = node.getClient();
-
-
-        ProxyResponse response = new ProxyResponse();
-        response.setRequestUrl(parcel.getUrl());
-        response.setUniqueKey(node.getUniqueKey());
-        response.setRequestSentAt(new Date().getTime());
-
-
-        client.sendEvent(WebView, new AckCallback<String>(String.class, 10) {
-            @Override
-            public void onSuccess(String result) {
-                if (result.equals("true")) {
-                    response.setStatus("success");
-                } else {
-                    response.setStatus("failed");
-                }
-                saveToDb(response);
-            }
-
-            @Override
-            public void onTimeout() {
-                response.setStatus("timeout");
-                saveToDb(response);
-            }
-        }, AzazteUtils.toJson(parcel));
-
-        return response;
-    }
-
-
-    public ProxyResponse getProxyResponse(final ProxyRequest request, int timeout) {
+    public Res getProxyResponse(final Req request, int timeout) {
         final Thread currentThread = Thread.currentThread();
         log.debug("Held thread : " + currentThread.getId());
 
         while (true) {
-            final ArrayList<ProxyResponse> response = new ArrayList<ProxyResponse>();
+            final ArrayList<Res> response = new ArrayList<Res>();
 
             Node node = getNextNode();
             if (node == null) {
@@ -233,15 +143,12 @@ public class SocketService {
                 public void onSuccess(String result) {
                     synchronized (currentThread) {
                         try {
-                            final ProxyResponse proxyResponse = AzazteUtils.fromJson(result, ProxyResponse.class);
+                            final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
                             response.add(proxyResponse);
-                            node.setProfile(new Profile(proxyResponse.getName(), proxyResponse.getUniqueKey()));
-                            proxyResponse.setResponseReceivedAt(new Date().getTime());
-                            proxyResponse.setRequestSentAt(requestSentAt);
-                            proxyResponse.setRequestUrl(request.getUrl());
-                            proxyResponse.setDataUsed(proxyResponse.getResponseBody().length);
-
-                            log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getResponseBody()[0] + "  From thread : " + currentThread.getId());
+                            node.setUniqueID(proxyResponse.getUniqueID());
+                            proxyResponse.setRequestURL(request.getUrl());
+                            proxyResponse.setDataUsed(proxyResponse.getBody().length);
+                            log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getBody()[0] + "  From thread : " + currentThread.getId());
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
@@ -262,7 +169,7 @@ public class SocketService {
             synchronized (currentThread) {
                 try {
                     log.debug("Waiting - " + "  From thread : " + currentThread.getId());
-                    log.debug("Sending request to " + node.getProfile());
+                    log.debug("Sending request to " + node.getUniqueID());
                     currentThread.wait(timeout * 1000);
                     log.debug("Notified - " + " From thread : " + currentThread.getId());
                     if (response.size() == 0) {
@@ -275,7 +182,7 @@ public class SocketService {
                         System.out.println("Horrible ... !! How can number of responses go above 1... Gandu coding skills");
                     }
 
-                    ProxyResponse presponse = response.get(0);
+                    Res presponse = response.get(0);
                     saveToDb(presponse);
                     log.debug("Request completed.Releasing thread : " + currentThread.getId());
                     return presponse;

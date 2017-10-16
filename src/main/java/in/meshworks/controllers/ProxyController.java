@@ -2,7 +2,6 @@ package in.meshworks.controllers;
 
 import in.meshworks.services.DomainHandler;
 import in.meshworks.services.ProxyService;
-import in.meshworks.services.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,27 +20,12 @@ public class ProxyController {
     ProxyService proxyService;
 
     @Autowired
-    ParcelService viewService;
-
-    @Autowired
     DomainHandler domainService;
 
     @RequestMapping(value = "temp", method = RequestMethod.GET)
     public ResponseEntity<Object> webview() {
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }
-
-    @RequestMapping(value = "view", method = RequestMethod.GET)
-    public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span, @RequestParam("parcelId") String parcelId) {
-        if (url == null || url.isEmpty()) {
-            return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
-        }
-
-        viewService.generateViews(url, views, span, parcelId);
-
-        return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
-    }
-
 
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
     public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {

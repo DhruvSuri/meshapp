@@ -6,14 +6,14 @@ import java.util.Map;
 /**
  * Created by harshvardhansharma on 24/07/17.
  */
-public class ProxyRequest {
+public class Req {
 
     private String method;
     private String url;
     private Map<String, String> headers = new HashMap<>();
     private byte[] body;
 
-    public ProxyRequest() {
+    public Req() {
     }
 
     public String getMethod() {

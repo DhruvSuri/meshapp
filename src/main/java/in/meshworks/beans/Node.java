@@ -9,31 +9,47 @@ import java.util.UUID;
  */
 public class Node {
 
-    private String uniqueKey;
+    private String uniqueID;
     private String version;
-    private Profile profile;
+    private String appName;
     private UUID sessionID;
     private SocketIOClient client;
 
-
-    public Node(Profile profile, SocketIOClient client) {
-        this.profile = profile;
+    public Node(String uniqueID, SocketIOClient client) {
+        this.uniqueID = uniqueID;
         this.client = client;
     }
 
     public Node(SocketIOClient client) {
         this.client = client;
         this.sessionID = client.getSessionId();
-        this.uniqueKey = client.getHandshakeData().getSingleUrlParam("uniqueKey");
+        this.uniqueID = client.getHandshakeData().getSingleUrlParam("uniqueID");
         this.version = client.getHandshakeData().getSingleUrlParam("version");
+        this.appName = client.getHandshakeData().getSingleUrlParam("appName");
     }
 
-    public Profile getProfile() {
-        return profile;
+    public String getUniqueID() {
+        return uniqueID;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setUniqueID(String uniqueID) {
+        this.uniqueID = uniqueID;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
     }
 
     public UUID getSessionID() {
@@ -52,30 +68,12 @@ public class Node {
         this.client = client;
     }
 
-    public String getUniqueKey() {
-        return uniqueKey;
-    }
-
-    public void setUniqueKey(String uniqueKey) {
-        this.uniqueKey = uniqueKey;
-    }
-
-    public String getVersion() {
-        return version;
-    }
-
-    public void setVersion(String version) {
-        this.version = version;
-    }
-
     @Override
     public String toString() {
         return "Node{" +
-                "uniqueKey='" + uniqueKey + '\'' +
+                "uniqueID='" + uniqueID + '\'' +
                 ", version='" + version + '\'' +
-                ", profile=" + profile +
-                ", sessionID=" + sessionID +
-                ", client=" + client +
+                ", appName='" + appName + '\'' +
                 '}';
     }
 }
