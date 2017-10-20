@@ -187,7 +187,7 @@ public class SocketService {
                     }
 
                     Res presponse = response.get(0);
-                    saveToDb(presponse);
+                    //saveToDb(presponse);
                     log.debug("Request completed.Releasing thread : " + currentThread.getId());
                     return presponse;
                 } catch (Exception e) {
