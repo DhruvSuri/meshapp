@@ -41,6 +41,8 @@ public class ProxyService {
         Res proxyResponse = socketService.getProxyResponse(proxyRequest, timeout);
         if (proxyResponse == null) {
             return new ResponseEntity<>("No nodes available", HttpStatus.SERVICE_UNAVAILABLE);
+        }else if (proxyResponse.getCode() == 801){
+            return new ResponseEntity<>("Something went wrong with the website", HttpStatus.EXPECTATION_FAILED);
         }
         return requestResponseService.buildGenericResponse(proxyResponse);
     }

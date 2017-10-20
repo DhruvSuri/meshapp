@@ -33,9 +33,9 @@ public class ProxyController {
             timeout = 30;
         }
 
-        if (!domainService.isValidDomain(url)){
-            return new ResponseEntity<Object>("Invalid Domain", HttpStatus.BAD_REQUEST);
-        }
+//        if (!domainService.isValidDomain(url)){
+//            return new ResponseEntity<Object>("Invalid Domain", HttpStatus.BAD_REQUEST);
+//        }
 
         if (url == null || url.isEmpty()) {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);

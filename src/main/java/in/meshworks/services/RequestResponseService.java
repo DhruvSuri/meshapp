@@ -46,8 +46,10 @@ public class RequestResponseService {
 
     private MultiValueMap<String, String> mapToMultiValueMap(Map<String, List<String>> map) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            multiValueMap.put(entry.getKey(), entry.getValue());
+        if (map != null && map.entrySet() != null) {
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                multiValueMap.put(entry.getKey(), entry.getValue());
+            }
         }
         return multiValueMap;
     }

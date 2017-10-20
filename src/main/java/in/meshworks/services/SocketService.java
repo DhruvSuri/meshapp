@@ -55,8 +55,7 @@ public class SocketService {
                         final Node node = new Node(socketIOClient);
                         try {
                             Thread.currentThread().sleep(500);
-                        }
-                        catch (InterruptedException ex) {
+                        } catch (InterruptedException ex) {
                             ex.printStackTrace();
                         }
 
@@ -117,7 +116,7 @@ public class SocketService {
 
     private boolean isAlreadyAddedToList(Node node) {
         for (Node item : list) {
-            if (item.getUniqueID().equals(node.getUniqueID())) {
+            if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
             }
         }
@@ -144,11 +143,16 @@ public class SocketService {
                     synchronized (currentThread) {
                         try {
                             final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
-                            response.add(proxyResponse);
-                            node.setUniqueID(proxyResponse.getUniqueID());
-                            proxyResponse.setRequestURL(request.getUrl());
-                            proxyResponse.setDataUsed(proxyResponse.getBody().length);
-                            log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getBody()[0] + "  From thread : " + currentThread.getId());
+                            if (proxyResponse.getCode() != 0) {
+                                response.add(proxyResponse);
+                                proxyResponse.setRequestURL(request.getUrl());
+                                proxyResponse.setDataUsed(proxyResponse.getBody().length);
+                                log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getBody()[0] + "  From thread : " + currentThread.getId());
+                            }
+                            else if (proxyResponse.getCode() == -1) {
+                                proxyResponse.setCode(801);
+                                response.add(proxyResponse);
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         } finally {
