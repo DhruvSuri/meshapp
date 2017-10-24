@@ -41,7 +41,7 @@ public class SocketService {
                 log.debug("Starting server");
                 Configuration config = new Configuration();
                 config.setPingInterval(5000);
-                config.setPingTimeout(10000);
+                config.setPingTimeout(30000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(DefaultPort);
