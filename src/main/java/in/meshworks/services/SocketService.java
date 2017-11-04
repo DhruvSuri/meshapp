@@ -34,6 +34,9 @@ public class SocketService {
     @Autowired
     MongoFactory mongoFactory;
 
+    @Autowired
+    MixpanelService analyticsService;
+
     public SocketService() {
         Thread tt = new Thread() {
 
@@ -62,6 +65,7 @@ public class SocketService {
                         if (!isAlreadyAddedToList(node)) {
                             list.add(node);
                         }
+                        analyticsService.track(node.getUniqueID(), "Connected");
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
                     }
@@ -71,6 +75,8 @@ public class SocketService {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
                         removeFromList(socketIOClient.getSessionId());
+                        Node node = new Node(socketIOClient);
+                        analyticsService.track(node.getUniqueID(), "Disconnected");
                         log.debug("Disconnected socket : " + socketIOClient.getSessionId());
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
