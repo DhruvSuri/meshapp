@@ -234,6 +234,10 @@ public class SocketService {
     public String getConnections() {
         return "Size = " + list.size() + "\n\n" + list.toString();
     }
+
+    public int getConnectionCount(){
+        return list.size();
+    }
 }
 
 
