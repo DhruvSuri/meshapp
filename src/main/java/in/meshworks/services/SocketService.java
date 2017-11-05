@@ -31,8 +31,8 @@ public class SocketService {
     private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
 
-    @Autowired
-    MongoFactory mongoFactory;
+//    @Autowired
+//    MongoFactory mongoFactory;
 
     @Autowired
     MixpanelService analyticsService;
@@ -43,8 +43,9 @@ public class SocketService {
             public void run() {
                 log.debug("Starting server");
                 Configuration config = new Configuration();
-                config.setPingInterval(5000);
-                config.setPingTimeout(30000);
+                config.setPingTimeout(10000000);
+                config.setPingInterval(10000000);
+                config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(DefaultPort);
@@ -52,15 +53,16 @@ public class SocketService {
                 server = new SocketIOServer(config);
 
                 server.addConnectListener(new ConnectListener() {
+
                     @Override
-                    public void onConnect(SocketIOClient socketIOClient) {
-                        log.debug("Connected socket : " + socketIOClient.getSessionId());
-                        final Node node = new Node(socketIOClient);
-                        try {
-                            Thread.currentThread().sleep(500);
-                        } catch (InterruptedException ex) {
-                            ex.printStackTrace();
-                        }
+                    public void onConnect(SocketIOClient client) {
+                        log.debug("Connected socket : " + client.getSessionId());
+                        final Node node = new Node(client);
+//                        try {
+//                            Thread.currentThread().sleep(500);
+//                        } catch (InterruptedException ex) {
+//                            ex.printStackTrace();
+//                        }
 
                         if (!isAlreadyAddedToList(node)) {
                             list.add(node);
@@ -69,6 +71,7 @@ public class SocketService {
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
                     }
+
                 });
 
                 server.addDisconnectListener(new DisconnectListener() {
@@ -224,7 +227,7 @@ public class SocketService {
 //
 //                }
 //            });
-            mongoFactory.getMongoTemplate().save(objectToSave);
+//            mongoFactory.getMongoTemplate().save(objectToSave);
         } catch (Exception failed) {
             failed.printStackTrace();
             log.error("Failed to save to mongo " + objectToSave.toString());
