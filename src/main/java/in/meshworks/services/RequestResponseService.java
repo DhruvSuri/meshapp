@@ -28,7 +28,7 @@ public class RequestResponseService {
 
     public Req buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
         Req proxyRequest = new Req();
-        proxyRequest.setMethod("GET");
+        proxyRequest.setMethod("POST");
         proxyRequest.setUrl(url);
         mapHeaders(proxyRequest, headers);
         proxyRequest.setBody(requestBody.getBytes());
