@@ -65,9 +65,9 @@ public class SocketService {
 //                        }
 
                         if (!isAlreadyAddedToList(node)) {
+                            analyticsService.track(node.getUniqueID(), "Connected");
                             list.add(node);
                         }
-                        analyticsService.track(node.getUniqueID(), "Connected");
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
                     }
@@ -124,6 +124,10 @@ public class SocketService {
     }
 
     private boolean isAlreadyAddedToList(Node node) {
+        if (node.getUniqueID().equals("3c3cdecc34962460")) {
+            return true;
+        }
+
         for (Node item : list) {
             if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
