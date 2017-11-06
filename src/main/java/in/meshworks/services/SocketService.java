@@ -192,7 +192,7 @@ public class SocketService {
                     log.debug("Notified - " + " From thread : " + currentThread.getId());
                     if (response.size() == 0) {
                         log.debug("Response size 0.. Continuing ");
-                        continue;
+                        return null;
                     }
 
                     if (response.size() > 1) {
