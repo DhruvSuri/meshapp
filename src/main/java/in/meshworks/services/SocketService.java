@@ -1,9 +1,6 @@
 package in.meshworks.services;
 
-import com.corundumstudio.socketio.AckCallback;
-import com.corundumstudio.socketio.Configuration;
-import com.corundumstudio.socketio.SocketIOClient;
-import com.corundumstudio.socketio.SocketIOServer;
+import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import in.meshworks.beans.Node;
@@ -43,12 +40,16 @@ public class SocketService {
             public void run() {
                 log.debug("Starting server");
                 Configuration config = new Configuration();
-                config.setPingTimeout(10000000);
-                config.setPingInterval(10000000);
+                SocketConfig socketConfig = new SocketConfig();
+
+                config.setPingTimeout(30000);
+                config.setPingInterval(10000);
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(DefaultPort);
+                socketConfig.setReuseAddress(true);
+                config.setSocketConfig(socketConfig);
 
                 server = new SocketIOServer(config);
 
