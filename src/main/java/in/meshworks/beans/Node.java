@@ -72,8 +72,8 @@ public class Node {
     public String toString() {
         return "Node{" +
                 "uniqueID='" + uniqueID + '\'' +
-                ", version='" + version + '\'' +
                 ", appName='" + appName + '\'' +
+                ", IP='" + client.getRemoteAddress() +
                 '}';
     }
 }
