@@ -27,4 +27,24 @@ public class MixpanelService {
             e.printStackTrace();
         }
     }
+
+    public void trackGeneric(String event, String value){
+
+        try {
+            JSONObject properties = new JSONObject();
+            properties.put(event, value);
+            JSONObject update =
+                    messageBuilder.append("13793", properties);
+            mixpanel.sendMessage(update);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String args[]){
+        new MixpanelService().trackGeneric("test", "1");
+        new MixpanelService().trackGeneric("test", "2");
+        new MixpanelService().trackGeneric("test", "3");
+        new MixpanelService().trackGeneric("test", "4");
+    }
 }
