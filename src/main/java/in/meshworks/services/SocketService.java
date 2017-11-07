@@ -6,7 +6,6 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import in.meshworks.beans.Node;
 import in.meshworks.beans.Req;
 import in.meshworks.beans.Res;
-import in.meshworks.mongo.MongoFactory;
 import in.meshworks.utils.AzazteUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Created by dhruv.suri on 11/05/17.
@@ -22,20 +23,18 @@ import java.util.*;
 public class SocketService {
 
     private static final Logger log = LoggerFactory.getLogger(SocketService.class);
-    private final int DefaultPort = 9000;
-    private final String DefaultEvent = "factor";
+    private final int defaultPort = 9000;
+    private final String defaultEvent = "factor";
     private static SocketIOServer server;
-    private String str = "";
     private List<Node> list = Collections.synchronizedList(new ArrayList<>());
-
-//    @Autowired
-//    MongoFactory mongoFactory;
+    private Thread serverThread;
 
     @Autowired
     MixpanelService analyticsService;
 
     public SocketService() {
-        Thread tt = new Thread() {
+
+        serverThread = new Thread() {
 
             public void run() {
                 log.debug("Starting server");
@@ -47,7 +46,7 @@ public class SocketService {
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
-                config.setPort(DefaultPort);
+                config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
 
@@ -59,16 +58,13 @@ public class SocketService {
                     public void onConnect(SocketIOClient client) {
                         log.debug("Connected socket : " + client.getSessionId());
                         final Node node = new Node(client);
-//                        try {
-//                            Thread.currentThread().sleep(500);
-//                        } catch (InterruptedException ex) {
-//                            ex.printStackTrace();
-//                        }
 
                         if (!isAlreadyAddedToList(node)) {
-                            analyticsService.track(node.getUniqueID(), "Connected");
+//                            TODO
+//                            analyticsService.track(node.getUniqueID(), "Connected");
                             list.add(node);
                         }
+
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
                     }
@@ -79,8 +75,6 @@ public class SocketService {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
                         removeFromList(socketIOClient.getSessionId());
-                        Node node = new Node(socketIOClient);
-                        analyticsService.track(node.getUniqueID(), "Disconnected");
                         log.debug("Disconnected socket : " + socketIOClient.getSessionId());
                         log.debug("Server list size : " + server.getAllClients().size());
                         log.debug("MyList list size : " + list.size());
@@ -98,7 +92,7 @@ public class SocketService {
                 server.stop();
             }
         };
-        tt.start();
+        serverThread.start();
     }
 
     @Override
@@ -112,23 +106,14 @@ public class SocketService {
             if (node.getSessionID() == sessionID) {
                 list.remove(node);
                 log.debug("REMOVING FROM LIST: " + node);
+//                TODO
+//                analyticsService.track(node.getUniqueID(), "Disconnected");
                 break;
             }
         }
     }
 
-    private boolean isValidNode(Node node) {
-        return node != null &&
-                node.getClient() != null && node.getClient().isChannelOpen() &&
-                node.getUniqueID() != null && !node.getUniqueID().trim().equals("") &&
-                node.getVersion() != null && node.getVersion().compareTo("4.0.0") >= 0;
-    }
-
     private boolean isAlreadyAddedToList(Node node) {
-        if (node.getUniqueID().equals("3c3cdecc34962460")) {
-            return true;
-        }
-
         for (Node item : list) {
             if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
@@ -138,77 +123,175 @@ public class SocketService {
     }
 
     public Res getProxyResponse(final Req request, int timeout) {
-        final Thread currentThread = Thread.currentThread();
-        log.debug("Held thread : " + currentThread.getId());
 
-        while (true) {
-            final ArrayList<Res> response = new ArrayList<Res>();
+        AtomicReference<Res> notifier = new AtomicReference<>();
+        int n = 5;
+        Res response = null;
 
-            Node node = getNextNode();
-            if (node == null) {
-                return null;
-            }
-            final SocketIOClient client = node.getClient();
-            final long requestSentAt = new Date().getTime();
+//        ExecutorService executorService = Executors.newFixedThreadPool(n);
+//
+//        boolean isCompleted = false;
+//
+//        List<Future<Res>> list = new ArrayList<>();
 
-            client.sendEvent(DefaultEvent, new AckCallback<String>(String.class, timeout) {
-                @Override
-                public void onSuccess(String result) {
-                    synchronized (currentThread) {
-                        try {
-                            final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
-                            if (proxyResponse.getCode() != 0) {
-                                response.add(proxyResponse);
-                                proxyResponse.setRequestURL(request.getUrl());
-                                proxyResponse.setDataUsed(proxyResponse.getBody().length);
-                                log.debug("Response from client: " + client.getSessionId() + " data: " + proxyResponse.getBody()[0] + "  From thread : " + currentThread.getId());
-                            }
-                            else if (proxyResponse.getCode() == -1) {
-                                proxyResponse.setCode(801);
-                                response.add(proxyResponse);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            currentThread.notify();
-                        }
+        for (int i = 0; i < n; i++) {
+            new Thread() {
+
+                public void run() {
+                    Res res = abcd(request, timeout);
+                    synchronized (notifier) {
+                        notifier.set(res);
+                        notifier.notify();
                     }
                 }
 
-                @Override
-                public void onTimeout() {
-                    synchronized (currentThread) {
-                        log.debug("Timed out for thread : " + currentThread.getId());
-                        currentThread.notify();
-                    }
-                }
-            }, AzazteUtils.toJson(request));
+            }.start();
+        }
 
-            synchronized (currentThread) {
+        synchronized (notifier) {
+            while(notifier.get() == null) {
                 try {
-                    log.debug("Waiting - " + "  From thread : " + currentThread.getId());
-                    log.debug("Sending request to " + node.getUniqueID());
-                    currentThread.wait(timeout * 1000);
-                    log.debug("Notified - " + " From thread : " + currentThread.getId());
-                    if (response.size() == 0) {
-                        log.debug("Response size 0.. Continuing ");
-                        continue;
-                    }
-
-                    if (response.size() > 1) {
-                        log.debug("Horrible ... !! How can number of responses go above 1... Gandu coding skills");
-                        System.out.println("Horrible ... !! How can number of responses go above 1... Gandu coding skills");
-                    }
-
-                    Res presponse = response.get(0);
-                    //saveToDb(presponse);
-                    log.debug("Request completed.Releasing thread : " + currentThread.getId());
-                    return presponse;
-                } catch (Exception e) {
-                    log.debug(e.getMessage());
+                    notifier.wait();
+                }
+                catch (InterruptedException ex) {
+                    ex.printStackTrace();
                 }
             }
         }
+
+
+//        while (!isCompleted) {
+//            for (Future<Res> future: list) {
+//                if (future.isDone()) {
+//                    try {
+//                        Res res = future.get();
+//                        isCompleted = true;
+//                        synchronized (notifier) {
+//                            notifier.set(res);
+//                            notifier.notify();
+//                        }
+//                    }
+//                    catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//        executorService.shutdown();
+
+        return notifier.get();
+    }
+
+    private Future<Res> assignFuture(ExecutorService executorService, Req request, int timeout) {
+
+        Future<Res> future = executorService.submit(new Callable<Res>() {
+
+            @Override
+            public Res call() throws Exception {
+                return abcd(request, timeout);
+            }
+
+        });
+        return future;
+
+    }
+
+    private Res abcd(Req request, int timeout) {
+
+        final AtomicReference<Res> notifier = new AtomicReference();
+
+        Node node = getNextNode();
+        if (node == null ){
+            return null;
+        }
+
+        final SocketIOClient client = node.getClient();
+        client.sendEvent(defaultEvent, new AckCallback<String>(String.class, timeout) {
+
+            @Override
+            public void onSuccess(String result) {
+                final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
+                synchronized (notifier) {
+                    notifier.set(proxyResponse);
+                    notifier.notify();
+                }
+            }
+
+            @Override
+            public void onTimeout() {
+                Res res = new Res();
+                res.setCode(801);
+                synchronized (notifier) {
+                    notifier.set(res);
+                    notifier.notify();
+                }
+            }
+
+        }, AzazteUtils.toJson(request));
+
+        synchronized (notifier) {
+            while(notifier.get() == null) {
+                try {
+                    notifier.wait();
+                }
+                catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        return notifier.get();
+    }
+
+    private Res getResponse(Req request, int timeout) {
+
+        Node node = getNextNode();
+        if (node == null ){
+            return null;
+        }
+
+        final SocketIOClient client = node.getClient();
+
+        final List<Res> responseList = new ArrayList<>();
+
+        Thread t = Thread.currentThread();
+        System.out.println("INSIDE THREAD: " + t.getId());
+
+        client.sendEvent(defaultEvent, new AckCallback<String>(String.class, timeout) {
+
+            @Override
+            public void onSuccess(String result) {
+                try {
+                    final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
+                    if (proxyResponse.getCode() != 0) {
+                        responseList.add(proxyResponse);
+                        t.notify();
+                    }
+                    else if (proxyResponse.getCode() == -1) {
+                        proxyResponse.setCode(801);
+                        responseList.add(proxyResponse);
+                        t.notify();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onTimeout() {
+                System.out.println(">> request timedout");
+            }
+
+        }, AzazteUtils.toJson(request));
+
+        try {
+            t.wait(timeout * 1000);
+        }
+        catch (InterruptedException ex) {
+            ex.printStackTrace();
+        }
+        return responseList.get(0);
+
     }
 
     public Node getNextNode() {
@@ -219,24 +302,6 @@ public class SocketService {
         Node node = list.remove(0);
         list.add(node);
         return node;
-    }
-
-    private void saveToDb(Object objectToSave) {
-        try {
-//            com.mongodb.client.MongoDatabase database = new MongoClient(new ServerAddress("52.66.66.36"), Arrays.asList(MongoCredential.createScramSha1Credential("elb", "admin", "elbproxymesh".toCharArray()))).getDatabase("local");
-//            MongoCollection<Document> profile = database.getCollection("Profile");
-//
-//            profile.insertOne(objectToSave, new SingleResultCallback<Void>() {
-//                @Override
-//                public void onResult(final Void result, final Throwable t) {
-//
-//                }
-//            });
-//            mongoFactory.getMongoTemplate().save(objectToSave);
-        } catch (Exception failed) {
-            failed.printStackTrace();
-            log.error("Failed to save to mongo " + objectToSave.toString());
-        }
     }
 
     public String getConnections() {
