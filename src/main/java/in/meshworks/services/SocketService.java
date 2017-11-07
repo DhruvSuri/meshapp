@@ -60,8 +60,7 @@ public class SocketService {
                         final Node node = new Node(client);
 
                         if (!isAlreadyAddedToList(node)) {
-//                            TODO
-//                            analyticsService.track(node.getUniqueID(), "Connected");
+                            analyticsService.track(node.getUniqueID(), "Connected");
                             list.add(node);
                         }
 
@@ -106,8 +105,7 @@ public class SocketService {
             if (node.getSessionID() == sessionID) {
                 list.remove(node);
                 log.debug("REMOVING FROM LIST: " + node);
-//                TODO
-//                analyticsService.track(node.getUniqueID(), "Disconnected");
+                analyticsService.track(node.getUniqueID(), "Disconnected");
                 break;
             }
         }
@@ -126,25 +124,16 @@ public class SocketService {
 
         AtomicReference<Res> notifier = new AtomicReference<>();
         int n = 5;
-        Res response = null;
-
-//        ExecutorService executorService = Executors.newFixedThreadPool(n);
-//
-//        boolean isCompleted = false;
-//
-//        List<Future<Res>> list = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
             new Thread() {
-
                 public void run() {
-                    Res res = abcd(request, timeout);
+                    Res res = getResponse(request, timeout);
                     synchronized (notifier) {
                         notifier.set(res);
                         notifier.notify();
                     }
                 }
-
             }.start();
         }
 
@@ -159,44 +148,10 @@ public class SocketService {
             }
         }
 
-
-//        while (!isCompleted) {
-//            for (Future<Res> future: list) {
-//                if (future.isDone()) {
-//                    try {
-//                        Res res = future.get();
-//                        isCompleted = true;
-//                        synchronized (notifier) {
-//                            notifier.set(res);
-//                            notifier.notify();
-//                        }
-//                    }
-//                    catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
-//        }
-//        executorService.shutdown();
-
         return notifier.get();
     }
 
-    private Future<Res> assignFuture(ExecutorService executorService, Req request, int timeout) {
-
-        Future<Res> future = executorService.submit(new Callable<Res>() {
-
-            @Override
-            public Res call() throws Exception {
-                return abcd(request, timeout);
-            }
-
-        });
-        return future;
-
-    }
-
-    private Res abcd(Req request, int timeout) {
+    private Res getResponse(Req request, int timeout) {
 
         final AtomicReference<Res> notifier = new AtomicReference();
 
@@ -241,57 +196,6 @@ public class SocketService {
         }
 
         return notifier.get();
-    }
-
-    private Res getResponse(Req request, int timeout) {
-
-        Node node = getNextNode();
-        if (node == null ){
-            return null;
-        }
-
-        final SocketIOClient client = node.getClient();
-
-        final List<Res> responseList = new ArrayList<>();
-
-        Thread t = Thread.currentThread();
-        System.out.println("INSIDE THREAD: " + t.getId());
-
-        client.sendEvent(defaultEvent, new AckCallback<String>(String.class, timeout) {
-
-            @Override
-            public void onSuccess(String result) {
-                try {
-                    final Res proxyResponse = AzazteUtils.fromJson(result, Res.class);
-                    if (proxyResponse.getCode() != 0) {
-                        responseList.add(proxyResponse);
-                        t.notify();
-                    }
-                    else if (proxyResponse.getCode() == -1) {
-                        proxyResponse.setCode(801);
-                        responseList.add(proxyResponse);
-                        t.notify();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onTimeout() {
-                System.out.println(">> request timedout");
-            }
-
-        }, AzazteUtils.toJson(request));
-
-        try {
-            t.wait(timeout * 1000);
-        }
-        catch (InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        return responseList.get(0);
-
     }
 
     public Node getNextNode() {
