@@ -1,11 +1,7 @@
 package in.meshworks.services;
 
-import in.meshworks.beans.ProxyRequest;
-import in.meshworks.beans.ProxyResponse;
-import okhttp3.CacheControl;
-import okhttp3.MediaType;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import in.meshworks.beans.Req;
+import in.meshworks.beans.Res;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,41 +18,47 @@ import java.util.Map;
 @Component
 public class RequestResponseService {
 
-    public ProxyRequest buildGetRequest(final String url, final HttpHeaders headers) {
-        ProxyRequest proxyRequest = new ProxyRequest();
+    public Req buildGetRequest(final String url, final HttpHeaders headers) {
+        Req proxyRequest = new Req();
         proxyRequest.setMethod("GET");
         proxyRequest.setUrl(url);
         mapHeaders(proxyRequest, headers);
         return proxyRequest;
     }
 
-    public ProxyRequest buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
-        ProxyRequest proxyRequest = new ProxyRequest();
-        proxyRequest.setMethod("GET");
+    public Req buildPostRequest(final String url, final HttpHeaders headers, final String requestBody) {
+        Req proxyRequest = new Req();
+        proxyRequest.setMethod("POST");
         proxyRequest.setUrl(url);
         mapHeaders(proxyRequest, headers);
         proxyRequest.setBody(requestBody.getBytes());
         return proxyRequest;
     }
 
-    public ResponseEntity<Object> buildGenericResponse(ProxyResponse proxyResponse) {
-        Object responseBody = proxyResponse.getResponseBody();
+    public ResponseEntity<Object> buildGenericResponse(Res proxyResponse) {
+        Object responseBody = proxyResponse.getBody();
 
-        MultiValueMap<String, String> headers = mapToMultiValueMap(proxyResponse.getResponseHeaders());
-        HttpStatus status = HttpStatus.valueOf(proxyResponse.getResponseCode());
+        MultiValueMap<String, String> headers = mapToMultiValueMap(proxyResponse.getHeaders());
+        HttpStatus status = HttpStatus.OK;
+        try {
+             status = HttpStatus.valueOf(proxyResponse.getCode());
+        }
+        catch (IllegalArgumentException ex) {}
 
         return new ResponseEntity<>(responseBody, headers, status);
     }
 
     private MultiValueMap<String, String> mapToMultiValueMap(Map<String, List<String>> map) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-            multiValueMap.put(entry.getKey(), entry.getValue());
+        if (map != null && map.entrySet() != null) {
+            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                multiValueMap.put(entry.getKey(), entry.getValue());
+            }
         }
         return multiValueMap;
     }
 
-    private void mapHeaders(ProxyRequest proxyRequest, HttpHeaders httpHeaders) {
+    private void mapHeaders(Req proxyRequest, HttpHeaders httpHeaders) {
         for (Map.Entry<String, List<String>> entry : httpHeaders.entrySet()) {
             if (!entry.getKey().equals("host")) {
                 proxyRequest.getHeaders().put(entry.getKey(), listToCSV(entry.getValue()));

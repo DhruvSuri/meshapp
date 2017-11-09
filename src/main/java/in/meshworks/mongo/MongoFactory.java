@@ -8,8 +8,9 @@ import org.springframework.stereotype.Service;
 /**
  * Created by home on 27/06/16.
  */
-@Service
+//@Service
 public class MongoFactory {
+
     private static MongoTemplate mongoTemplate;
 
     private MongoFactory() {

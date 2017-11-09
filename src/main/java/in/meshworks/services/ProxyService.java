@@ -1,7 +1,7 @@
 package in.meshworks.services;
 
-import in.meshworks.beans.ProxyRequest;
-import in.meshworks.beans.ProxyResponse;
+import in.meshworks.beans.Req;
+import in.meshworks.beans.Res;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,8 +23,8 @@ public class ProxyService {
     @Autowired
     RequestResponseService requestResponseService;
 
-    public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod, boolean headersAllowed) {
-        ProxyRequest proxyRequest;
+    public ResponseEntity<Object> proxy(String url, HttpHeaders headers, String requestBody, int timeout, HttpMethod httpMethod, boolean headersAllowed, NodeService.ListType listType) {
+        Req proxyRequest;
         switch (httpMethod) {
             case GET:
                 proxyRequest = requestResponseService.buildGetRequest(url, headers);
@@ -38,14 +38,16 @@ public class ProxyService {
         if (!headersAllowed) {
             proxyRequest.setHeaders(new HashMap<>());
         }
-        ProxyResponse proxyResponse = socketService.getProxyResponse(proxyRequest, timeout);
+        Res proxyResponse = socketService.getProxyResponse(proxyRequest, timeout, listType);
         if (proxyResponse == null) {
             return new ResponseEntity<>("No nodes available", HttpStatus.SERVICE_UNAVAILABLE);
+        }else if (proxyResponse.getCode() == 801){
+            return new ResponseEntity<>("Something went wrong with the website", HttpStatus.EXPECTATION_FAILED);
         }
         return requestResponseService.buildGenericResponse(proxyResponse);
     }
 
-    public String list() {
-        return socketService.getConnections();
+    public String list(NodeService.ListType listType) {
+        return socketService.getConnections(listType);
     }
 }

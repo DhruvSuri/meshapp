@@ -1,8 +1,8 @@
 package in.meshworks.controllers;
 
 import in.meshworks.services.DomainHandler;
+import in.meshworks.services.NodeService;
 import in.meshworks.services.ProxyService;
-import in.meshworks.services.ParcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -21,9 +21,6 @@ public class ProxyController {
     ProxyService proxyService;
 
     @Autowired
-    ParcelService viewService;
-
-    @Autowired
     DomainHandler domainService;
 
     @RequestMapping(value = "temp", method = RequestMethod.GET)
@@ -31,37 +28,21 @@ public class ProxyController {
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "view", method = RequestMethod.GET)
-    public ResponseEntity<Object> webview(@RequestParam("url") String url, @RequestParam("views") Integer views, @RequestParam("span") Integer span, @RequestParam("parcelId") String parcelId) {
-        if (url == null || url.isEmpty()) {
-            return new ResponseEntity<>("Invalid URL", HttpStatus.BAD_REQUEST);
-        }
-
-        viewService.generateViews(url, views, span, parcelId);
-
-        return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
-    }
-
-
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
-    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
+    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
         if (timeout == null) {
             timeout = 30;
-        }
-
-        if (!domainService.isValidDomain(url)){
-            return new ResponseEntity<Object>("Invalid Domain", HttpStatus.BAD_REQUEST);
         }
 
         if (url == null || url.isEmpty()) {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed);
+        return proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed, listTypeParams(type));
     }
 
     @RequestMapping(value = "proxy", method = RequestMethod.POST)
-    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed) {
+    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
         if (timeout == null) {
             timeout = 30;
         }
@@ -70,12 +51,12 @@ public class ProxyController {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST, headersAllowed);
+        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST, headersAllowed, listTypeParams(type));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "listview")
-    public String getListInfo() {
-        return proxyService.list();
+    public String getListInfo(@RequestParam(value = "type", required = false) Integer type) {
+        return proxyService.list(listTypeParams(type));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "addHost")
@@ -91,5 +72,14 @@ public class ProxyController {
     @RequestMapping(method = RequestMethod.GET, value = "resetHosts")
     public String resetHosts() {
         return domainService.resetHosts();
+    }
+
+    private NodeService.ListType listTypeParams(int type) {
+        if (type != 0) {
+            return NodeService.ListType.ULTIMATE;
+        }
+        else {
+            return NodeService.ListType.BASIC;
+        }
     }
 }

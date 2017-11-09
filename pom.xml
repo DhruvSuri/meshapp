@@ -104,6 +104,12 @@
             <artifactId>netty-socketio</artifactId>
             <version>1.7.12</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.mixpanel</groupId>
+            <artifactId>mixpanel-java</artifactId>
+            <version>1.4.4</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -1,22 +1,32 @@
 package in.meshworks.schedulers;
 
-import in.meshworks.services.ProfileService;
+import in.meshworks.services.MixpanelService;
 import in.meshworks.services.ProxyService;
 import in.meshworks.services.SocketService;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 /**
  * Created by dhruv.suri on 30/05/17.
  */
 @Component
 public class Scheduler {
+
+    @Autowired
+    SocketService socketService;
+
+    @Autowired
+    MixpanelService mixpanelService;
+
+//    /**
+//     * To be run every 1 min = 1 * 60 * 1000
+//     */
+//    @Scheduled(fixedRate = 60000)
+//    public void updateDataConsumptionStats(){
+//        int count = socketService.getConnectionCount();
+//        mixpanelService.track("count", count + "");
+//    }
 
 //    @Autowired
 //    SocketService socketService;
