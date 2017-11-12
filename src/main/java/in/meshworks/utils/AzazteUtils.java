@@ -42,7 +42,7 @@ public class AzazteUtils {
                 OkHttpClient client = new OkHttpClient();
 
                 Request request = new Request.Builder()
-                        .url("http://13.126.226.17/proxy?url=http://checkip.amazonaws.com")
+                        .url("http://13.126.226.17/proxy?url=http://checkip.amazonaws.com&type=0")
                         .build();
                 Response execute = client.newCall(request).execute();
                 String ip = execute.body().string();
@@ -58,6 +58,7 @@ public class AzazteUtils {
         }
 
         System.out.println(map.toString());
+        System.out.println(map.keySet().size());
         System.out.println(proxyCount);
 
     }
