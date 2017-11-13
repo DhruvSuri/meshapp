@@ -57,7 +57,7 @@ public class SocketService {
                         log.debug("Connected socket : " + client.getSessionId());
                         final Node node = new Node(client);
                         nodeService.addNode(node);
-                        System.gc();
+//                        System.gc();
                     }
 
                 });
@@ -67,7 +67,7 @@ public class SocketService {
                     public void onDisconnect(SocketIOClient socketIOClient) {
                         nodeService.removeSocketIOClient(socketIOClient);
                         socketIOClient.disconnect();
-                        System.gc();
+//                        System.gc();
                     }
                 });
                 server.start();

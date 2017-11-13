@@ -49,7 +49,7 @@ public class NodeService {
             if (node.getSessionID() == socketIOClient.getSessionId()) {
                 basicList.remove(node);
                 ultimateList.remove(node);
-                System.gc();
+//                System.gc();
                 break;
             }
         }
