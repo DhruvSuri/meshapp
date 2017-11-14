@@ -120,9 +120,11 @@ public class SocketService {
                 }
             }
         }
+
         if (listType == NodeService.ListType.BASIC) {
             nodeService.promote(notifier.get().getUniqueID());
         }
+        System.out.println(">> >> >> [" + notifier.get().getCode() + "] : " + notifier.get().getUniqueID());
         return notifier.get();
     }
 
