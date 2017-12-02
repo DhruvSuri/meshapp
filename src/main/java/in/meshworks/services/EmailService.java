@@ -38,6 +38,7 @@ public class EmailService {
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
 
         ResponseEntity<Object> response = proxyService.proxy(url, headers, null, 30, HttpMethod.GET, true, NodeService.ListType.BASIC);
+        System.out.println(response.toString());
         NeverBounceResponse neverBounceResponse = parseResponse((String) response.getBody());
         return processResponse(neverBounceResponse);
     }
@@ -63,6 +64,7 @@ public class EmailService {
     }
 
     public NeverBounceResponse parseResponse(String body) {
+        System.out.println("Recived body as : " + body);
         StringTokenizer tokenizer = new StringTokenizer(body, "()");
         String parsedBody = tokenizer.nextToken();
         parsedBody = tokenizer.nextToken();
