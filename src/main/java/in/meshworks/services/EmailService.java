@@ -1,6 +1,8 @@
 package in.meshworks.services;
 
 import in.meshworks.beans.NeverBounceResponse;
+import in.meshworks.beans.Req;
+import in.meshworks.beans.Res;
 import in.meshworks.utils.AzazteUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -27,6 +29,12 @@ public class EmailService {
     @Autowired
     ProxyService proxyService;
 
+    @Autowired
+    RequestResponseService requestResponseService;
+
+    @Autowired
+    SocketService socketService;
+
     private static String callback = "__neverbounce_729594";
 
     public ResponseEntity verifyEmail(String email) {
@@ -41,9 +49,11 @@ public class EmailService {
         headers.add("referer", "https://app.neverbounce.com/register");
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
 
-        ResponseEntity<Object> response = proxyService.proxy(url, headers, null, 30, HttpMethod.GET, true, NodeService.ListType.BASIC);
-        System.out.println(response.getBody().toString());
-        NeverBounceResponse neverBounceResponse = parseResponse((String) response.getBody());
+        Req req = requestResponseService.buildGetRequest(url, headers);
+        Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
+
+        System.out.println(String.valueOf(response.getBody()));
+        NeverBounceResponse neverBounceResponse = parseResponse(String.valueOf(response.getBody()));
         return processResponse(neverBounceResponse);
     }
 
@@ -64,6 +74,8 @@ public class EmailService {
 
             body = "Error code = " + errorCode + ".Contact Support. Thanks for joining our Beta program";
         }
+
+
         return new ResponseEntity(body, new LinkedMultiValueMap<>(), status);
     }
 

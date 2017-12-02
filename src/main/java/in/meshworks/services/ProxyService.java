@@ -27,7 +27,7 @@ public class ProxyService {
         Req proxyRequest;
         switch (httpMethod) {
             case GET:
-                proxyRequest = requestResponseService.buildGetRequest(url, headers);
+                    proxyRequest = requestResponseService.buildGetRequest(url, headers);
                 break;
             case POST:
                 proxyRequest = requestResponseService.buildPostRequest(url, headers, requestBody);
