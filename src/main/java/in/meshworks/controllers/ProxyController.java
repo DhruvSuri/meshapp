@@ -1,6 +1,7 @@
 package in.meshworks.controllers;
 
 import in.meshworks.services.DomainHandler;
+import in.meshworks.services.EmailService;
 import in.meshworks.services.NodeService;
 import in.meshworks.services.ProxyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by harshvardhansharma on 04/07/17.
@@ -23,13 +26,21 @@ public class ProxyController {
     @Autowired
     DomainHandler domainService;
 
+    @Autowired
+    EmailService emailService;
+
     @RequestMapping(value = "temp", method = RequestMethod.GET)
     public ResponseEntity<Object> webview() {
         return new ResponseEntity<>("Sent Successfully", HttpStatus.CREATED);
     }
 
+    @RequestMapping(value = "email", method = RequestMethod.GET)
+    public ResponseEntity<Object> emailGET(@RequestParam("email") String email){
+        return emailService.verifyEmail(email);
+    }
+
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
-    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
+    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestParam Map<String,String> allRequestParams, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
         if (timeout == null) {
             timeout = 30;
         }

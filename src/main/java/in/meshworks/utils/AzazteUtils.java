@@ -33,10 +33,11 @@ public class AzazteUtils {
 
 
     public static void main(String args[]) {
+
         int i = 0;
         Map<String, Integer> map = new HashMap();
         int proxyCount = 0;
-        while(i < 100){
+        while (i < 300) {
             try {
                 i++;
                 OkHttpClient client = new OkHttpClient();
@@ -47,10 +48,10 @@ public class AzazteUtils {
                 Response execute = client.newCall(request).execute();
                 String ip = execute.body().string();
                 Integer count = map.get(ip);
-                if (count == null){
+                if (count == null) {
                     count = 0;
                 }
-                proxyCount ++;
+                proxyCount++;
                 map.put(ip, count + 1);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -60,6 +61,5 @@ public class AzazteUtils {
         System.out.println(map.toString());
         System.out.println(map.keySet().size());
         System.out.println(proxyCount);
-
     }
 }

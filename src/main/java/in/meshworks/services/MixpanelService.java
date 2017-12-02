@@ -41,10 +41,4 @@ public class MixpanelService {
         }
     }
 
-    public static void main(String args[]){
-        new MixpanelService().trackGeneric("test", "1");
-        new MixpanelService().trackGeneric("test", "2");
-        new MixpanelService().trackGeneric("test", "3");
-        new MixpanelService().trackGeneric("test", "4");
-    }
 }

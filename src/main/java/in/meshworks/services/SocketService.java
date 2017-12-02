@@ -75,7 +75,7 @@ public class SocketService {
                 try {
                     Thread.sleep(Integer.MAX_VALUE);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 } finally {
                     server.stop();
                 }
@@ -100,7 +100,6 @@ public class SocketService {
             new Thread() {
                 public void run() {
                     Node node = nodeService.getNextNode(listType);
-
                     Res res = getResponse(node, request, timeout, listType);
                     synchronized (notifier) {
                         notifier.set(res);
@@ -116,7 +115,7 @@ public class SocketService {
                     notifier.wait();
                 }
                 catch (InterruptedException ex) {
-                    ex.printStackTrace();
+//                    ex.printStackTrace();
                 }
             }
         }
@@ -163,7 +162,7 @@ public class SocketService {
                     notifier.wait();
                 }
                 catch (InterruptedException ex) {
-                    ex.printStackTrace();
+//                    ex.printStackTrace();
                 }
             }
         }
