@@ -49,7 +49,10 @@ public class ProxyController {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed, listTypeParams(type));
+        ResponseEntity<Object> response = proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed, listTypeParams(type));
+        System.out.println(response.getBody().toString());
+        System.out.println(response.toString());
+        return response;
     }
 
     @RequestMapping(value = "proxy", method = RequestMethod.POST)
