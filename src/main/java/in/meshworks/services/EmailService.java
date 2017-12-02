@@ -42,7 +42,7 @@ public class EmailService {
         headers.add("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
 
         ResponseEntity<Object> response = proxyService.proxy(url, headers, null, 30, HttpMethod.GET, true, NodeService.ListType.BASIC);
-        System.out.println(response.toString());
+        System.out.println(response.getBody().toString());
         NeverBounceResponse neverBounceResponse = parseResponse((String) response.getBody());
         return processResponse(neverBounceResponse);
     }
