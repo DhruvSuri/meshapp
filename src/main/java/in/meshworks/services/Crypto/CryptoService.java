@@ -26,7 +26,7 @@ public class CryptoService extends Thread {
     private int downSell = 1;
     private int minDifference = 1;
 
-    private int sleepTime = 10000;
+    private int sleepTime = 1000;
 
     private EvictingQueue<Double> queue = EvictingQueue.create(5);
 
@@ -62,7 +62,7 @@ public class CryptoService extends Thread {
         CryptoService neo = new CryptoService("neo", "btc-neo");
         neo.start();
 
-        CryptoService sc = new CryptoService("sc", "btc-sc");
+        CryptoService sc = new CryptoService("mona", "btc-mona");
         sc.start();
 
         List<CryptoService> list = new ArrayList<>();
@@ -121,7 +121,6 @@ public class CryptoService extends Thread {
     public void buy() {
         Double priceInDollars = getUnitPriceInDollars();
         if (tether <= 0) {
-            System.out.println("Insufficient funds to buy");
             return;
         }
         currencyUnits = tether / priceInDollars;
@@ -189,7 +188,13 @@ public class CryptoService extends Thread {
         Request req = new Request.Builder().url(url).build();
         Response execute = client.newCall(req).execute();
         String tickerResponseString = execute.body().string();
-        TickerResponse tickerResponse = AzazteUtils.fromJson(tickerResponseString, TickerResponse.class);
+        TickerResponse tickerResponse = null;
+        try{
+            tickerResponse = AzazteUtils.fromJson(tickerResponseString, TickerResponse.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         return tickerResponse;
     }
 
