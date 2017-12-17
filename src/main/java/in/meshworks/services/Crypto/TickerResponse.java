@@ -1,7 +1,6 @@
 package in.meshworks.services.Crypto;
 
 import com.google.gson.annotations.SerializedName;
-import com.sun.xml.internal.ws.developer.Serialization;
 
 /**
  * Created by dhruv.suri on 04/12/17.

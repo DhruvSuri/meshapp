@@ -1,6 +1,7 @@
 package in.meshworks.services.Crypto;
 
 import com.google.common.collect.EvictingQueue;
+
 import in.meshworks.utils.AzazteUtils;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -78,7 +79,7 @@ public class CryptoService extends Thread {
         while (i < 1000) {
             int sum = 0;
             try {
-                Thread.sleep(60000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

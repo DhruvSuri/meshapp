@@ -40,7 +40,7 @@ public class ProxyController {
     }
 
     @RequestMapping(value = "proxy", method = RequestMethod.GET)
-    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestParam Map<String,String> allRequestParams, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
+    public ResponseEntity<Object> proxyGET(@RequestParam("url") String url, @RequestParam Map<String,String> allRequestParams, @RequestHeader(required = false) HttpHeaders headers, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "headersAllowed", required = false) boolean headersAllowed) {
         if (timeout == null) {
             timeout = 30;
         }
@@ -49,14 +49,14 @@ public class ProxyController {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        ResponseEntity<Object> response = proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed, listTypeParams(type));
+        ResponseEntity<Object> response = proxyService.proxy(url, headers, null, timeout, HttpMethod.GET, headersAllowed, listTypeParams(0));
         System.out.println(response.getBody().toString());
         System.out.println(response.toString());
         return response;
     }
 
     @RequestMapping(value = "proxy", method = RequestMethod.POST)
-    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "header", required = false) boolean headersAllowed, @RequestParam(value = "type", required = false) Integer type) {
+    public ResponseEntity<Object> proxyPOST(@RequestParam("url") String url, @RequestHeader HttpHeaders headers, @RequestBody String requestBody, @RequestParam(value = "timeout", required = false) Integer timeout, @RequestParam(value = "headersAllowed", required = false) boolean headersAllowed) {
         if (timeout == null) {
             timeout = 30;
         }
@@ -65,7 +65,7 @@ public class ProxyController {
             return new ResponseEntity<Object>("Invalid URL", HttpStatus.BAD_REQUEST);
         }
 
-        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST, headersAllowed, listTypeParams(type));
+        return proxyService.proxy(url, headers, requestBody, timeout, HttpMethod.POST, headersAllowed, listTypeParams(0));
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "listview")
