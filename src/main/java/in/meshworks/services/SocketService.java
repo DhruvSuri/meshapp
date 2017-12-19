@@ -50,9 +50,6 @@ public class SocketService {
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
 
-                StoreFactory storeFactory = new HazelcastStoreFactory();
-                config.setStoreFactory(storeFactory);
-
                 server = new SocketIOServer(config);
 
                 server.addConnectListener(new ConnectListener() {
