@@ -56,11 +56,9 @@ public class SocketService {
 
                     @Override
                     public void onConnect(SocketIOClient client) {
-                        if (client.isChannelOpen()) {
-                            log.debug("Connected socket : " + client.getSessionId());
-                            final Node node = new Node(client);
-                            nodeService.addNode(node);
-                        }
+                        log.debug("Connected socket : " + client.getSessionId());
+                        final Node node = new Node(client);
+                        nodeService.addNode(node);
                     }
 
                 });
