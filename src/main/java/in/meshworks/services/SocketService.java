@@ -43,7 +43,7 @@ public class SocketService {
 
                 config.setPingTimeout(30000);
                 config.setPingInterval(10000);
-                config.setUpgradeTimeout(180000);
+                config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(defaultPort);
@@ -54,24 +54,29 @@ public class SocketService {
 
                 server = new SocketIOServer(config);
 
-                server.addConnectListener(new ConnectListener() {
+                try {
+                    server.addConnectListener(new ConnectListener() {
 
-                    @Override
-                    public void onConnect(SocketIOClient client) {
-                        log.debug("Connected socket : " + client.getSessionId());
-                        final Node node = new Node(client);
-                        nodeService.addNode(node);
-                    }
+                        @Override
+                        public void onConnect(SocketIOClient client) {
+                            log.debug("Connected socket : " + client.getSessionId());
+                            final Node node = new Node(client);
+                            nodeService.addNode(node);
+                        }
 
-                });
+                    });
 
-                server.addDisconnectListener(new DisconnectListener() {
-                    @Override
-                    public void onDisconnect(SocketIOClient socketIOClient) {
-                        nodeService.removeSocketIOClient(socketIOClient);
+                    server.addDisconnectListener(new DisconnectListener() {
+                        @Override
+                        public void onDisconnect(SocketIOClient socketIOClient) {
+                            nodeService.removeSocketIOClient(socketIOClient);
 //                        socketIOClient.disconnect();
-                    }
-                });
+                        }
+                    });
+                }
+                catch (Exception ex) {
+                    System.out.println(">>>>>>>> " + ex);
+                }
 
                 server.start();
 
