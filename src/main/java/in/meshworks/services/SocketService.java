@@ -50,6 +50,8 @@ public class SocketService {
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
 
+                config.setAckMode(AckMode.AUTO);
+
                 server = new SocketIOServer(config);
 
                 server.addConnectListener(new ConnectListener() {
@@ -149,8 +151,6 @@ public class SocketService {
                 Res res = new Res();
                 res.setCode(801);
                 synchronized (notifier) {
-                    nodeService.removeSocketIOClient(client);
-                    client.disconnect();
                     notifier.set(res);
                     notifier.notify();
                 }
