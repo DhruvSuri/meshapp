@@ -56,10 +56,11 @@ public class SocketService {
 
                     @Override
                     public void onConnect(SocketIOClient client) {
-                        log.debug("Connected socket : " + client.getSessionId());
-                        final Node node = new Node(client);
-                        nodeService.addNode(node);
-//                        System.gc();
+                        if (client.isChannelOpen()) {
+                            log.debug("Connected socket : " + client.getSessionId());
+                            final Node node = new Node(client);
+                            nodeService.addNode(node);
+                        }
                     }
 
                 });
@@ -67,9 +68,10 @@ public class SocketService {
                 server.addDisconnectListener(new DisconnectListener() {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
-                        nodeService.removeSocketIOClient(socketIOClient);
-                        socketIOClient.disconnect();
-//                        System.gc();
+                        if (!socketIOClient.isChannelOpen()) {
+                            nodeService.removeSocketIOClient(socketIOClient);
+                            socketIOClient.disconnect();
+                        }
                     }
                 });
                 server.start();
@@ -151,6 +153,10 @@ public class SocketService {
                 Res res = new Res();
                 res.setCode(801);
                 synchronized (notifier) {
+                    if (!client.isChannelOpen()) {
+                        nodeService.removeSocketIOClient(client);
+                        client.disconnect();
+                    }
                     notifier.set(res);
                     notifier.notify();
                 }
