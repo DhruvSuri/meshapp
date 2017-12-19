@@ -43,7 +43,7 @@ public class SocketService {
 
                 config.setPingTimeout(30000);
                 config.setPingInterval(10000);
-                config.setUpgradeTimeout(10000000);
+                config.setUpgradeTimeout(180000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
                 config.setPort(defaultPort);
@@ -72,6 +72,7 @@ public class SocketService {
 //                        socketIOClient.disconnect();
                     }
                 });
+
                 server.start();
 
                 try {
