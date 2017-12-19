@@ -66,10 +66,8 @@ public class SocketService {
                 server.addDisconnectListener(new DisconnectListener() {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
-                        if (!socketIOClient.isChannelOpen()) {
-                            nodeService.removeSocketIOClient(socketIOClient);
-                            socketIOClient.disconnect();
-                        }
+                        nodeService.removeSocketIOClient(socketIOClient);
+                        socketIOClient.disconnect();
                     }
                 });
                 server.start();
@@ -151,10 +149,8 @@ public class SocketService {
                 Res res = new Res();
                 res.setCode(801);
                 synchronized (notifier) {
-                    if (!client.isChannelOpen()) {
-                        nodeService.removeSocketIOClient(client);
-                        client.disconnect();
-                    }
+                    nodeService.removeSocketIOClient(client);
+                    client.disconnect();
                     notifier.set(res);
                     notifier.notify();
                 }
