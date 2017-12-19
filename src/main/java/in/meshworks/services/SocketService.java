@@ -69,7 +69,7 @@ public class SocketService {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
                         nodeService.removeSocketIOClient(socketIOClient);
-                        socketIOClient.disconnect();
+//                        socketIOClient.disconnect();
                     }
                 });
                 server.start();
