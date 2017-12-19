@@ -3,6 +3,8 @@ package in.meshworks.services;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.corundumstudio.socketio.store.HazelcastStoreFactory;
+import com.corundumstudio.socketio.store.StoreFactory;
 import in.meshworks.beans.Node;
 import in.meshworks.beans.Req;
 import in.meshworks.beans.Res;
@@ -47,6 +49,9 @@ public class SocketService {
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
+
+                StoreFactory storeFactory = new HazelcastStoreFactory();
+                config.setStoreFactory(storeFactory);
 
                 server = new SocketIOServer(config);
 
