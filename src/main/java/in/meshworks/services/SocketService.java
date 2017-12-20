@@ -81,7 +81,7 @@ public class SocketService {
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
-                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
+//                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
                         Iterator<SocketIOClient> itr = server.getAllClients().iterator();
 
                         Set<String> set = new HashSet<>();
@@ -94,7 +94,7 @@ public class SocketService {
                     }
                 });
 
-                config.setAckMode(AckMode.AUTO);
+//                config.setAckMode(AckMode.AUTO);
 
                 server = new SocketIOServer(config);
 
