@@ -80,21 +80,20 @@ public class SocketService {
                     @Override
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
                         log.info(">>> exceptionCaught");
-                        log.info(ctx.channel().remoteAddress().toString());
-                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
-                        log.info("" + client);
-//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+                        log.info("" + server.getAllClients().size());
+
+//                        log.info(ctx.channel().remoteAddress().toString());
+//                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
+//                        log.info("" + client);
+                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
 //
-//                        Set<String> set = new HashSet<>();
-//                        int index = 0;
-//                        while(itr.hasNext()) {
-//                            index += 1;
-//                            SocketIOClient cl = itr.next();
-//                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
-//                            set.add(uniqueID);
-////                            set.add(cl.getRemoteAddress().toString());
-//                        }
-//                        log.info("" + set.size() + "/" + index);
+                        Set<String> set = new HashSet<>();
+                        while(itr.hasNext()) {
+                            SocketIOClient cl = itr.next();
+                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
+                            set.add(uniqueID);
+                        }
+                        log.info("" + set.size() + "/" + server.getAllClients().size());
                         return true;
                     }
                 });
