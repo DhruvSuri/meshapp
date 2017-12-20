@@ -16,10 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -84,7 +81,14 @@ public class SocketService {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
-//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+
+                        List<Boolean> list = new ArrayList<>();
+                        while(itr.hasNext()) {
+                            list.add(itr.next().isChannelOpen());
+                        }
+                        log.info("" + list.size());
+                        log.info("" + list);
                         return true;
                     }
                 });
