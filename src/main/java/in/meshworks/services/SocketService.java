@@ -51,7 +51,7 @@ public class SocketService {
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
-                config.setWorkerThreads(5000);
+                config.setWorkerThreads(500);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
