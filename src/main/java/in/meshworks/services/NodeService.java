@@ -99,8 +99,8 @@ public class NodeService {
             return true;
         }
 
-        StringTokenizer stk1 = new StringTokenizer(node.getClient().getRemoteAddress().toString(), ":");
-        String ip1 = stk1.nextToken();
+//        StringTokenizer stk1 = new StringTokenizer(node.getClient().getRemoteAddress().toString(), ":");
+//        String ip1 = stk1.nextToken();
 
         for (Node item : list) {
             if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
@@ -108,12 +108,12 @@ public class NodeService {
             }
 
 
-            StringTokenizer stk2 = new StringTokenizer(item.getClient().getRemoteAddress().toString(), ":");
-            String ip2 = stk2.nextToken();
-
-            if (ip1.equals(ip2)) {
-                return true;
-            }
+//            StringTokenizer stk2 = new StringTokenizer(item.getClient().getRemoteAddress().toString(), ":");
+//            String ip2 = stk2.nextToken();
+//
+//            if (ip1.equals(ip2)) {
+//                return true;
+//            }
 
         }
         return false;
