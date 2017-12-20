@@ -3,12 +3,14 @@ package in.meshworks.services;
 import com.corundumstudio.socketio.*;
 import com.corundumstudio.socketio.listener.ConnectListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
+import com.corundumstudio.socketio.listener.ExceptionListener;
 import com.corundumstudio.socketio.store.HazelcastStoreFactory;
 import com.corundumstudio.socketio.store.StoreFactory;
 import in.meshworks.beans.Node;
 import in.meshworks.beans.Req;
 import in.meshworks.beans.Res;
 import in.meshworks.utils.AzazteUtils;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,9 +48,38 @@ public class SocketService {
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
+
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
+
+                config.setExceptionListener(new ExceptionListener() {
+                    @Override
+                    public void onEventException(Exception e, List<Object> args, SocketIOClient client) {
+                        log.info(">>> onEventException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+                        log.info(e.getMessage());
+                        log.info(">>>");
+                    }
+
+                    @Override
+                    public void onDisconnectException(Exception e, SocketIOClient client) {
+                        log.info(">>> onDisconnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+                        log.info(e.getMessage());
+                        log.info(">>>");
+                    }
+
+                    @Override
+                    public void onConnectException(Exception e, SocketIOClient client) {
+                        log.info(">>> onConnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+                        log.info(e.getMessage());
+                        log.info(">>>");
+                    }
+
+                    @Override
+                    public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
+                        return false;
+                    }
+                });
 
                 config.setAckMode(AckMode.AUTO);
 
