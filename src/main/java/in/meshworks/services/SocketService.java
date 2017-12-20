@@ -71,7 +71,6 @@ public class SocketService {
                         if (socketIOClient.getSessionId() == null) {
                             return;
                         }
-                        server.getAllClients().remove(socketIOClient);
                         nodeService.removeSocketIOClient(socketIOClient);
                     }
                 });

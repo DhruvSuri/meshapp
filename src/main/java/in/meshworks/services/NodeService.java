@@ -40,13 +40,13 @@ public class NodeService {
     public void addNode(Node node) {
         if (!isAlreadyAddedToList(node, basicList)) {
             basicList.add(node);
-            mixpanelService.track(node.getUniqueID(), "Connected");
+//            mixpanelService.track(node.getUniqueID(), "Connected");
         }
     }
 
     public void removeSocketIOClient(SocketIOClient socketIOClient) {
         for (Node node : basicList) {
-            if (node.getSessionID() == socketIOClient.getSessionId()) {
+            if (node.getSessionID().equals(socketIOClient.getSessionId())) {
                 basicList.remove(node);
                 ultimateList.remove(node);
 //                System.gc();
