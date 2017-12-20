@@ -49,6 +49,7 @@ public class NodeService {
         for (Node node: basicList) {
             if (node.getClient().getRemoteAddress().equals(remoteAddr)) {
                 basicList.remove(node);
+                ultimateList.remove(node);
                 return node.getClient();
             }
         }
