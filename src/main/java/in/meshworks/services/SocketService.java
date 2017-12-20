@@ -85,15 +85,15 @@ public class SocketService {
 //                        log.info(ctx.channel().remoteAddress().toString());
 //                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
 //                        log.info("" + client);
-                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
-//
-                        Set<String> set = new HashSet<>();
-                        while(itr.hasNext()) {
-                            SocketIOClient cl = itr.next();
-                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
-                            set.add(uniqueID);
-                        }
-                        log.info("" + set.size() + "/" + server.getAllClients().size());
+//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+////
+//                        Set<String> set = new HashSet<>();
+//                        while(itr.hasNext()) {
+//                            SocketIOClient cl = itr.next();
+//                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
+//                            set.add(uniqueID);
+//                        }
+//                        log.info("" + set.size() + "/" + server.getAllClients().size());
                         return true;
                     }
                 });
@@ -107,6 +107,16 @@ public class SocketService {
                     @Override
                     public void onConnect(SocketIOClient client) {
                         log.debug("Connected socket : " + client.getSessionId());
+                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+                        while (itr.hasNext()) {
+                            SocketIOClient cl = itr.next();
+                            StringTokenizer stk1 = new StringTokenizer(cl.getRemoteAddress().toString(), ":");
+                            StringTokenizer stk2 = new StringTokenizer(client.getRemoteAddress().toString(), ":");
+                            if (stk1.nextToken().equals(stk2.nextToken())) {
+                                log.info("SAME IP ALREADY ADDED");
+                                return;
+                            }
+                        }
                         final Node node = new Node(client);
                         nodeService.addNode(node);
                     }
