@@ -77,7 +77,9 @@ public class SocketService {
 
                     @Override
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-                        return false;
+                        log.info(">>> exceptionCaught");
+                        log.info(ctx.name());
+                        return true;
                     }
                 });
 
