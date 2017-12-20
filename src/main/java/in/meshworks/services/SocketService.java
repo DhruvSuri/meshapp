@@ -79,6 +79,9 @@ public class SocketService {
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.pipeline().channel().id().asLongText());
+                        log.info(ctx.pipeline().channel().id().asShortText());
+                        log.info(ctx.channel().remoteAddress().toString());
+                        ctx.channel().disconnect();
                         return true;
                     }
                 });
