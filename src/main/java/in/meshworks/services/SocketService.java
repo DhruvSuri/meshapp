@@ -80,7 +80,7 @@ public class SocketService {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
-                        log.info("<<<" + server.getAllClients().contains(client));
+                        log.info("<<<" + server.getAllClients().size());
                         return true;
                     }
                 });
