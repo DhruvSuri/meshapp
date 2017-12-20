@@ -49,8 +49,6 @@ public class SocketService {
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
-                config.setTransports(Transport.POLLING);
-
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);
@@ -81,6 +79,7 @@ public class SocketService {
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
+                        e.printStackTrace();
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
                         return true;
                     }
