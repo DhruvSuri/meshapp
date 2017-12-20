@@ -79,8 +79,8 @@ public class SocketService {
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
-                        e.printStackTrace();
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
+                        log.info("" + server.getAllClients().contains(client));
                         return true;
                     }
                 });
