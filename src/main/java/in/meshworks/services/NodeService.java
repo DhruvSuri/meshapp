@@ -47,7 +47,7 @@ public class NodeService {
 
     public SocketIOClient removeNodeByRemoteAddr(SocketAddress remoteAddr) {
         for (Node node: basicList) {
-            if (node.getClient().getRemoteAddress().equals(remoteAddr)) {
+            if (node.getClient().getRemoteAddress().toString().equals(remoteAddr.toString())) {
                 basicList.remove(node);
                 ultimateList.remove(node);
                 return node.getClient();

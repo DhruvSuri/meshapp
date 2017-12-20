@@ -49,6 +49,8 @@ public class SocketService {
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
+                config.setTransports(Transport.WEBSOCKET);
+
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
                 config.setSocketConfig(socketConfig);

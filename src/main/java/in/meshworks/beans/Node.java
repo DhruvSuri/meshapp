@@ -74,7 +74,7 @@ public class Node {
                 "uniqueID='" + uniqueID + '\'' +
                 ", appName='" + appName + '\'' +
                 ", IP='" + client.getRemoteAddress() + '\'' +
-                ", sessionId=" + sessionID + 
+                ", sessionId=" + sessionID +
                 '}';
     }
 }
