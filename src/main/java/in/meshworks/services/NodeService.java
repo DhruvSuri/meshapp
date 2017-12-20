@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.SocketAddress;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by harshvardhansharma on 07/11/17.
@@ -23,8 +24,9 @@ public class NodeService {
         ULTIMATE
     }
 
-    private List<Node> basicList = Collections.synchronizedList(new ArrayList<>());
+    private List<Node> basicList = new CopyOnWriteArrayList<Node>(); //Collections.synchronizedList(new ArrayList<>());
     private List<Node> ultimateList = Collections.synchronizedList(new ArrayList<>());
+
 
     @Autowired
     MixpanelService mixpanelService;
