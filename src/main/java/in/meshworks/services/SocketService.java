@@ -51,6 +51,7 @@ public class SocketService {
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
+                config.setWorkerThreads(5000);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
@@ -84,13 +85,6 @@ public class SocketService {
                         log.info(ctx.channel().remoteAddress().toString());
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
                         Iterator<SocketIOClient> itr = server.getAllClients().iterator();
-
-                        Set<String> set = new HashSet<>();
-                        while (itr.hasNext()) {
-                            client = itr.next();
-                            set.add(client.getSessionId().toString());
-                        }
-                        log.info("<<<" + set.size());
                         return true;
                     }
                 });
