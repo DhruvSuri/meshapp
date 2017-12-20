@@ -147,7 +147,7 @@ public class SocketService {
     public Res getProxyResponse(final Req request, int timeout, NodeService.ListType listType) {
 
         AtomicReference<Res> notifier = new AtomicReference<>();
-        int n = 3;
+        int n = 1;
 
         for (int i = 0; i < n; i++) {
             new Thread() {
