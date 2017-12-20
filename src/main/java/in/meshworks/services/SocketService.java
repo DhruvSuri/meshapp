@@ -45,7 +45,7 @@ public class SocketService {
 
                 config.setPingTimeout(30000);
                 config.setPingInterval(10000);
-                config.setUpgradeTimeout(10000);
+                config.setUpgradeTimeout(4000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
