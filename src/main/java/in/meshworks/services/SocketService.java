@@ -112,8 +112,11 @@ public class SocketService {
                             SocketIOClient cl = itr.next();
                             StringTokenizer stk1 = new StringTokenizer(cl.getRemoteAddress().toString(), ":");
                             StringTokenizer stk2 = new StringTokenizer(client.getRemoteAddress().toString(), ":");
-                            if (stk1.nextToken().equals(stk2.nextToken())) {
-                                log.info("SAME IP ALREADY ADDED");
+
+                            String ip1 = stk1.nextToken();
+                            String ip2 = stk2.nextToken();
+                            if (ip1.equals(ip2)) {
+                                log.info("SAME IP ALREADY ADDED: " + ip1 + " :: " + ip2);
                                 return;
                             }
                         }
