@@ -41,8 +41,8 @@ public class SocketService {
                 Configuration config = new Configuration();
                 SocketConfig socketConfig = new SocketConfig();
 
-//                config.setPingTimeout(30000);
-//                config.setPingInterval(10000);
+                config.setPingTimeout(30000);
+                config.setPingInterval(10000);
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
@@ -54,29 +54,27 @@ public class SocketService {
 
                 server = new SocketIOServer(config);
 
-                try {
-                    server.addConnectListener(new ConnectListener() {
+                server.addConnectListener(new ConnectListener() {
 
-                        @Override
-                        public void onConnect(SocketIOClient client) {
-                            log.debug("Connected socket : " + client.getSessionId());
-                            final Node node = new Node(client);
-                            nodeService.addNode(node);
+                    @Override
+                    public void onConnect(SocketIOClient client) {
+                        log.debug("Connected socket : " + client.getSessionId());
+                        final Node node = new Node(client);
+                        nodeService.addNode(node);
+                    }
+
+                });
+
+                server.addDisconnectListener(new DisconnectListener() {
+                    @Override
+                    public void onDisconnect(SocketIOClient socketIOClient) {
+                        if (socketIOClient.getSessionId() == null) {
+                            return;
                         }
-
-                    });
-
-                    server.addDisconnectListener(new DisconnectListener() {
-                        @Override
-                        public void onDisconnect(SocketIOClient socketIOClient) {
-                            nodeService.removeSocketIOClient(socketIOClient);
-//                        socketIOClient.disconnect();
-                        }
-                    });
-                }
-                catch (Exception ex) {
-                    System.out.println(">>>>>>>> " + ex);
-                }
+                        server.getAllClients().remove(socketIOClient.getSessionId());
+                        nodeService.removeSocketIOClient(socketIOClient);
+                    }
+                });
 
                 server.start();
 
