@@ -132,7 +132,6 @@ public class SocketService {
                 } finally {
                     server.stop();
                 }
-                server.stop();
             }
         };
         serverThread.start();
@@ -152,7 +151,11 @@ public class SocketService {
         for (int i = 0; i < n; i++) {
             new Thread() {
                 public void run() {
-                    Node node = nodeService.getNextNode(listType);
+                    ArrayList<SocketIOClient> clients = new ArrayList<>(server.getAllClients());
+                    int anInt = new Random().nextInt(clients.size());
+//                    Node node = nodeService.getNextNode(listType);
+                    SocketIOClient client = clients.get(anInt);
+                    Node node = new Node(client);
                     Res res = getResponse(node, request, timeout, listType);
                     synchronized (notifier) {
                         notifier.set(res);
