@@ -24,7 +24,8 @@ public class NodeService {
         ULTIMATE
     }
 
-    private List<Node> basicList = new CopyOnWriteArrayList<Node>(); //Collections.synchronizedList(new ArrayList<>());
+    public static Integer holder = 0;
+    private List<Node> basicList = Collections.synchronizedList(new ArrayList<>());
     private List<Node> ultimateList = Collections.synchronizedList(new ArrayList<>());
 
 
@@ -42,11 +43,15 @@ public class NodeService {
     }
 
     public void addNode(Node node) {
-        if (!isAlreadyAddedToList(node, basicList)) {
-            log.info("ADDING NODE: " + node + " TO LIST");
-            basicList.add(node);
+        synchronized (holder){
+            log.info("Adding to list");
+            if (!isAlreadyAddedToList(node, basicList)) {
+                basicList.add(node);
 //            mixpanelService.track(node.getUniqueID(), "Connected");
+            }
+            log.info("Addition complete");
         }
+
     }
 
     public SocketIOClient removeNodeByRemoteAddr(SocketAddress remoteAddr) {
