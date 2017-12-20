@@ -48,7 +48,8 @@ public class SocketService {
                 config.setUpgradeTimeout(10000000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
-                config.setWorkerThreads(1000);
+
+                config.setWorkerThreads(5000);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
@@ -88,7 +89,6 @@ public class SocketService {
                             list.add(itr.next().isChannelOpen());
                         }
                         log.info("" + list.size());
-                        log.info("" + list);
                         return true;
                     }
                 });
