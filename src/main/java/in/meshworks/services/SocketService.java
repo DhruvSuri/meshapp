@@ -116,9 +116,6 @@ public class SocketService {
                 server.addDisconnectListener(new DisconnectListener() {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
-                        if (socketIOClient.getSessionId() == null) {
-                            return;
-                        }
                         nodeService.removeSocketIOClient(socketIOClient);
                     }
                 });

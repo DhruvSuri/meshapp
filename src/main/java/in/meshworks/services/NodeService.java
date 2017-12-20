@@ -2,6 +2,8 @@ package in.meshworks.services;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import in.meshworks.beans.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.*;
  */
 @Service
 public class NodeService {
+
+    private static final Logger log = LoggerFactory.getLogger(NodeService.class);
 
     public enum ListType {
         BASIC,
@@ -37,6 +41,7 @@ public class NodeService {
 
     public void addNode(Node node) {
         if (!isAlreadyAddedToList(node, basicList)) {
+            log.info("ADDING NODE: " + node + " TO LIST");
             basicList.add(node);
 //            mixpanelService.track(node.getUniqueID(), "Connected");
         }
