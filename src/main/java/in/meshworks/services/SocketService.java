@@ -58,30 +58,27 @@ public class SocketService {
                 config.setExceptionListener(new ExceptionListener() {
                     @Override
                     public void onEventException(Exception e, List<Object> args, SocketIOClient client) {
-                        log.info(">>> onEventException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onEventException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public void onDisconnectException(Exception e, SocketIOClient client) {
-                        log.info(">>> onDisconnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onDisconnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public void onConnectException(Exception e, SocketIOClient client) {
-                        log.info(">>> onConnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onConnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-                        log.info(">>> exceptionCaught");
-                        log.info("" + server.getAllClients().size());
-
 //                        log.info(ctx.channel().remoteAddress().toString());
 //                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
 //                        log.info("" + client);
@@ -113,12 +110,12 @@ public class SocketService {
 
                 });
 
-                server.addDisconnectListener(new DisconnectListener() {
-                    @Override
-                    public void onDisconnect(SocketIOClient socketIOClient) {
-                        nodeService.removeSocketIOClient(socketIOClient);
-                    }
-                });
+//                server.addDisconnectListener(new DisconnectListener() {
+//                    @Override
+//                    public void onDisconnect(SocketIOClient socketIOClient) {
+//                        nodeService.removeSocketIOClient(socketIOClient);
+//                    }
+//                });
 
                 server.start();
 

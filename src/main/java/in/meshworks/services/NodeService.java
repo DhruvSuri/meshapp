@@ -44,12 +44,10 @@ public class NodeService {
 
     public void addNode(Node node) {
         synchronized (holder){
-            log.info("Adding to list");
             if (!isAlreadyAddedToList(node, basicList)) {
                 basicList.add(node);
 //            mixpanelService.track(node.getUniqueID(), "Connected");
             }
-            log.info("Addition complete");
         }
 
     }
