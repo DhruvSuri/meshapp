@@ -89,7 +89,7 @@ public class SocketService {
                     }
                 });
 
-//                config.setAckMode(AckMode.AUTO);
+                config.setAckMode(AckMode.AUTO);
 
                 server = new SocketIOServer(config);
 
