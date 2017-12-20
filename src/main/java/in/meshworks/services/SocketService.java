@@ -82,14 +82,16 @@ public class SocketService {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
 //                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
-                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
 
-                        Set<String> set = new HashSet<>();
-                        while(itr.hasNext()) {
-                            SocketIOClient cl = itr.next();
-                            set.add(cl.getRemoteAddress().toString());
-                        }
-                        log.info("" + set.size());
+//                        Set<String> set = new HashSet<>();
+//                        int index = 0;
+//                        while(itr.hasNext()) {
+//                            index += 1;
+//                            SocketIOClient cl = itr.next();
+//                            set.add(cl.getRemoteAddress().toString());
+//                        }
+//                        log.info("" + set.size() + "/" + index);
                         return true;
                     }
                 });
