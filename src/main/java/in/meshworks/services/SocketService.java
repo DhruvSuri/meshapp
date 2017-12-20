@@ -45,7 +45,7 @@ public class SocketService {
 
                 config.setPingTimeout(30000);
                 config.setPingInterval(10000);
-                config.setUpgradeTimeout(10000000);
+                config.setUpgradeTimeout(180000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
@@ -110,12 +110,12 @@ public class SocketService {
 
                 });
 
-//                server.addDisconnectListener(new DisconnectListener() {
-//                    @Override
-//                    public void onDisconnect(SocketIOClient socketIOClient) {
-//                        nodeService.removeSocketIOClient(socketIOClient);
-//                    }
-//                });
+                server.addDisconnectListener(new DisconnectListener() {
+                    @Override
+                    public void onDisconnect(SocketIOClient socketIOClient) {
+                        nodeService.removeSocketIOClient(socketIOClient);
+                    }
+                });
 
                 server.start();
 
