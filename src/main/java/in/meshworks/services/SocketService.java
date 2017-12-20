@@ -81,7 +81,8 @@ public class SocketService {
                         log.info(ctx.pipeline().channel().id().asLongText());
                         log.info(ctx.pipeline().channel().id().asShortText());
                         log.info(ctx.channel().remoteAddress().toString());
-                        ctx.channel().disconnect();
+                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
+                        client.disconnect();
                         return true;
                     }
                 });

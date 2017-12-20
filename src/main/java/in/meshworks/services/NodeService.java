@@ -5,6 +5,7 @@ import in.meshworks.beans.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.SocketAddress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,6 +43,16 @@ public class NodeService {
             basicList.add(node);
 //            mixpanelService.track(node.getUniqueID(), "Connected");
         }
+    }
+
+    public SocketIOClient removeNodeByRemoteAddr(SocketAddress remoteAddr) {
+        for (Node node: basicList) {
+            if (node.getClient().getRemoteAddress().equals(remoteAddr)) {
+                basicList.remove(node);
+                return node.getClient();
+            }
+        }
+        return null;
     }
 
     public void removeSocketIOClient(SocketIOClient socketIOClient) {
