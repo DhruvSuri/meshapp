@@ -73,7 +73,8 @@ public class Node {
         return "Node{" +
                 "uniqueID='" + uniqueID + '\'' +
                 ", appName='" + appName + '\'' +
-                ", IP='" + client.getRemoteAddress() +
+                ", IP='" + client.getRemoteAddress() + '\'' +
+                ", sessionId=" + sessionID + 
                 '}';
     }
 }
