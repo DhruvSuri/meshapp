@@ -49,7 +49,7 @@ public class SocketService {
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
-                config.setWorkerThreads(3000);
+                config.setWorkerThreads(1000);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
@@ -84,11 +84,12 @@ public class SocketService {
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
                         Iterator<SocketIOClient> itr = server.getAllClients().iterator();
 
-                        List<Boolean> list = new ArrayList<>();
+                        Set<String> set = new HashSet<>();
                         while(itr.hasNext()) {
-                            list.add(itr.next().isChannelOpen());
+                            SocketIOClient cl = itr.next();
+                            set.add(cl.getRemoteAddress().toString());
                         }
-                        log.info("" + list.size());
+                        log.info("" + set.size());
                         return true;
                     }
                 });
