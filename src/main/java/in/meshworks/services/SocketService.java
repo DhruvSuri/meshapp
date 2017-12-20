@@ -84,12 +84,12 @@ public class SocketService {
                         log.info(">>> exceptionCaught");
                         log.info(ctx.channel().remoteAddress().toString());
                         SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
-                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
                         return true;
                     }
                 });
 
-                config.setAckMode(AckMode.AUTO);
+//                config.setAckMode(AckMode.AUTO);
 
                 server = new SocketIOServer(config);
 
