@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by harshvardhansharma on 07/11/17.
@@ -95,10 +92,22 @@ public class NodeService {
             return true;
         }
 
+        StringTokenizer stk1 = new StringTokenizer(node.getClient().getRemoteAddress().toString(), ":");
+        String ip1 = stk1.nextToken();
+
         for (Node item : list) {
             if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
             }
+
+
+            StringTokenizer stk2 = new StringTokenizer(item.getClient().getRemoteAddress().toString(), ":");
+            String ip2 = stk2.nextToken();
+
+            if (ip1.equals(ip2)) {
+                return true;
+            }
+
         }
         return false;
     }
