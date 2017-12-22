@@ -49,7 +49,7 @@ public class SocketService {
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
-                config.setWorkerThreads(1000);
+//                config.setWorkerThreads(1000);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
