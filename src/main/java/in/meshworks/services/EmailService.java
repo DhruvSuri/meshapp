@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.StringTokenizer;
 
@@ -52,7 +53,7 @@ public class EmailService {
         Req req = requestResponseService.buildGetRequest(url, headers);
         Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
 
-        return parseAndprocessResponse(String.valueOf(response.getBody()));
+        return parseAndprocessResponse(Arrays.toString(response.getBody()));
     }
 
     private ResponseEntity parseAndprocessResponse(String response) {
