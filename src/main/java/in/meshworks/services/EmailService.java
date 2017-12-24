@@ -53,10 +53,10 @@ public class EmailService {
         Req req = requestResponseService.buildGetRequest(url, headers);
         Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
 
-        return parseAndprocessResponse(Arrays.toString(response.getBody()));
+        return parseAndProcessResponse(new String(response.getBody()));
     }
 
-    private ResponseEntity parseAndprocessResponse(String response) {
+    private ResponseEntity parseAndProcessResponse(String response) {
         NeverBounceResponse neverBounceResponse = parseResponse(response);
         HttpStatus status;
         String body;
