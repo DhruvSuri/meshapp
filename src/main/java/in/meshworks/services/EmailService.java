@@ -52,12 +52,11 @@ public class EmailService {
         Req req = requestResponseService.buildGetRequest(url, headers);
         Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
 
-        System.out.println(String.valueOf(response.getBody()));
-        NeverBounceResponse neverBounceResponse = parseResponse(String.valueOf(response.getBody()));
-        return processResponse(neverBounceResponse);
+        return parseAndprocessResponse(String.valueOf(response.getBody()));
     }
 
-    private ResponseEntity processResponse(NeverBounceResponse neverBounceResponse) {
+    private ResponseEntity parseAndprocessResponse(String response) {
+        NeverBounceResponse neverBounceResponse = parseResponse(response);
         HttpStatus status;
         String body;
         if (neverBounceResponse.getStatus().equals("success")) {
@@ -102,9 +101,12 @@ public class EmailService {
                 .addHeader("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36").build();
 
         try {
-            Response response = client.newCall(req).execute();
-            System.out.println(response.body().string());
-        } catch (IOException e) {
+            //Response response = client.newCall(req).execute();
+//            String responseString = response.body().string();
+            String responseString = "__neverbounce_729594({\"status\":\"success\",\"result\":\"valid\",\"flags\":[\"smtp_connectable\",\"has_dns\",\"has_dns_mx\"],\"suggested_correction\":\"\",\"next_limit\":14,\"allow_entry\":true,\"transaction_id\":\"NBPOE-TXN-5a4004d80b0ce\",\"confirmation_token\":\"18bca2be5adf09aac3094ae8b8870afa\",\"retry_token\":\"\",\"execution_time\":376})";
+            NeverBounceResponse neverBounceResponse = new EmailService().parseResponse(responseString);
+            System.out.println(neverBounceResponse.toString());
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

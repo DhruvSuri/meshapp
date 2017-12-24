@@ -37,7 +37,7 @@ public class AzazteUtils {
         int i = 0;
         Map<String, Integer> map = new HashMap();
         int proxyCount = 0;
-        while (i < 1000) {
+        while (i < 10000) {
             try {
                 i++;
                 OkHttpClient client = new OkHttpClient();
