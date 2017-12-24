@@ -25,9 +25,9 @@ public class CryptoService extends Thread {
 
     private int upSell = 5;
     private int downSell = 1;
-    private int minDifference = 1;
+    private int minDifference = 2;
 
-    private int sleepTime = 1000;
+    private static int sleepTime = 1000 * 60;
 
     private EvictingQueue<Double> queue = EvictingQueue.create(5);
 
@@ -79,11 +79,11 @@ public class CryptoService extends Thread {
         while (i < 1000) {
             int sum = 0;
             try {
-                Thread.sleep(2000);
+                Thread.sleep(sleepTime);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("*****Wallet balances*****");
+            System.out.println("*****Wallet balances***** " + new Date().toLocaleString());
             for (CryptoService cryptoService : list) {
                 System.out.println(cryptoService.currencyName + " : $" + cryptoService.getWalletBalance());
                 sum = (int) (sum + cryptoService.getWalletBalance());
@@ -170,7 +170,7 @@ public class CryptoService extends Thread {
         try {
             response = getTickerTrial(primaryUrl, currencyMarketName);
         } catch (Exception e) {
-            System.out.println("Primary Ticker Failed");
+
         }
 
         if (response == null) {
@@ -190,10 +190,11 @@ public class CryptoService extends Thread {
         Response execute = client.newCall(req).execute();
         String tickerResponseString = execute.body().string();
         TickerResponse tickerResponse = null;
-        try{
+        try {
             tickerResponse = AzazteUtils.fromJson(tickerResponseString, TickerResponse.class);
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Primary Ticker Failed \n " + tickerResponseString);
+//            e.printStackTrace();
         }
 
         return tickerResponse;
@@ -202,21 +203,32 @@ public class CryptoService extends Thread {
     private Boolean shouldBuy() {
         int end = new DateTime().getMinuteOfDay();
         int start = priceLastAdded.getMinuteOfDay();
-        if (end - start >= minDifference) {
-            queue.add(getUnitPriceInDollars());
-            priceLastAdded = new DateTime();
+        queue.add(getUnitPriceInDollars());
+        priceLastAdded = new DateTime();
+
+
+        return getSlope() > 0.001;
+    }
+
+    private Double getSlope() {
+//        X = T
+//        Y = Price
+        int n = queue.size();
+        int x = 1;
+        Double sumSqrX = 0.00;
+        Double sumX = 0.00;
+        Double sumProduct = 0.00;
+        Double sumY = 0.00;
+
+        for (Double y : queue) {
+            sumSqrX = sumSqrX + x * x;
+            sumX = sumX + x;
+            sumProduct = sumProduct + x * y;
+            sumY = sumY + y;
+            x++;
         }
 
-        double diff = 0;
-        double last = 0;
-        for (Double aDouble : queue) {
-            if (last == 0) {
-                last = aDouble;
-                continue;
-            }
-            diff = diff + aDouble - last;
-        }
-        return diff > 0;
+        return (n * sumProduct - (sumX * sumY)) / ((n * sumSqrX) - sumX * sumX);
     }
 }
 

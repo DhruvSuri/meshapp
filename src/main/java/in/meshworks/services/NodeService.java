@@ -24,7 +24,8 @@ public class NodeService {
         ULTIMATE
     }
 
-    public static Integer holder = 0;
+    private static final Integer holder = 0;
+
     private List<Node> basicList = Collections.synchronizedList(new ArrayList<>());
     private List<Node> ultimateList = Collections.synchronizedList(new ArrayList<>());
 
@@ -64,14 +65,17 @@ public class NodeService {
     }
 
     public void removeSocketIOClient(SocketIOClient socketIOClient) {
-        for (Node node : basicList) {
-            if (node.getSessionID().equals(socketIOClient.getSessionId())) {
-                basicList.remove(node);
-                ultimateList.remove(node);
+        synchronized (holder){
+            for (Node node : basicList) {
+                if (node.getSessionID().equals(socketIOClient.getSessionId())) {
+                    basicList.remove(node);
+                    ultimateList.remove(node);
 //                System.gc();
-                break;
+                    break;
+                }
             }
         }
+
     }
 
     public List<Node> getNodes(ListType listType) {
