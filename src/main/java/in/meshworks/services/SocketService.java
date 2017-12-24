@@ -45,11 +45,11 @@ public class SocketService {
 
                 config.setPingTimeout(30000);
                 config.setPingInterval(10000);
-                config.setUpgradeTimeout(10000000);
+                config.setUpgradeTimeout(120000);
                 config.setMaxFramePayloadLength(Integer.MAX_VALUE);
                 config.setMaxHttpContentLength(Integer.MAX_VALUE);
 
-                config.setWorkerThreads(1000);
+//                config.setWorkerThreads(1000);
 
                 config.setPort(defaultPort);
                 socketConfig.setReuseAddress(true);
@@ -58,42 +58,39 @@ public class SocketService {
                 config.setExceptionListener(new ExceptionListener() {
                     @Override
                     public void onEventException(Exception e, List<Object> args, SocketIOClient client) {
-                        log.info(">>> onEventException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onEventException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public void onDisconnectException(Exception e, SocketIOClient client) {
-                        log.info(">>> onDisconnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onDisconnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public void onConnectException(Exception e, SocketIOClient client) {
-                        log.info(">>> onConnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
-                        log.info(e.getMessage());
-                        log.info(">>>");
+//                        log.info(">>> onConnectException: client: " + client.getSessionId() + " :: " + client.isChannelOpen());
+//                        log.info(e.getMessage());
+//                        log.info(">>>");
                     }
 
                     @Override
                     public boolean exceptionCaught(ChannelHandlerContext ctx, Throwable e) throws Exception {
-                        log.info(">>> exceptionCaught");
-                        log.info("" + server.getAllClients().size());
-
 //                        log.info(ctx.channel().remoteAddress().toString());
 //                        SocketIOClient client = nodeService.removeNodeByRemoteAddr(ctx.channel().remoteAddress());
 //                        log.info("" + client);
-                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
-//
-                        Set<String> set = new HashSet<>();
-                        while(itr.hasNext()) {
-                            SocketIOClient cl = itr.next();
-                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
-                            set.add(uniqueID);
-                        }
-                        log.info("" + set.size() + "/" + server.getAllClients().size());
+//                        Iterator<SocketIOClient> itr = server.getAllClients().iterator();
+////
+//                        Set<String> set = new HashSet<>();
+//                        while(itr.hasNext()) {
+//                            SocketIOClient cl = itr.next();
+//                            String uniqueID = cl.getHandshakeData().getSingleUrlParam("uniqueID");
+//                            set.add(uniqueID);
+//                        }
+//                        log.info("" + set.size() + "/" + server.getAllClients().size());
                         return true;
                     }
                 });
@@ -116,9 +113,6 @@ public class SocketService {
                 server.addDisconnectListener(new DisconnectListener() {
                     @Override
                     public void onDisconnect(SocketIOClient socketIOClient) {
-                        if (socketIOClient.getSessionId() == null) {
-                            return;
-                        }
                         nodeService.removeSocketIOClient(socketIOClient);
                     }
                 });
@@ -146,7 +140,7 @@ public class SocketService {
     public Res getProxyResponse(final Req request, int timeout, NodeService.ListType listType) {
 
         AtomicReference<Res> notifier = new AtomicReference<>();
-        int n = 1;
+        int n = 2;
 
         for (int i = 0; i < n; i++) {
             new Thread() {

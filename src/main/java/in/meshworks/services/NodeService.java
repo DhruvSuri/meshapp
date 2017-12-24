@@ -2,20 +2,22 @@ package in.meshworks.services;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import in.meshworks.beans.Node;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by harshvardhansharma on 07/11/17.
  */
 @Service
 public class NodeService {
+
+    private static final Logger log = LoggerFactory.getLogger(NodeService.class);
 
     public enum ListType {
         BASIC,
@@ -26,6 +28,7 @@ public class NodeService {
 
     private List<Node> basicList = Collections.synchronizedList(new ArrayList<>());
     private List<Node> ultimateList = Collections.synchronizedList(new ArrayList<>());
+
 
     @Autowired
     MixpanelService mixpanelService;
@@ -41,10 +44,13 @@ public class NodeService {
     }
 
     public void addNode(Node node) {
-        if (!isAlreadyAddedToList(node, basicList)) {
-            basicList.add(node);
+        synchronized (holder){
+            if (!isAlreadyAddedToList(node, basicList)) {
+                basicList.add(node);
 //            mixpanelService.track(node.getUniqueID(), "Connected");
+            }
         }
+
     }
 
     public SocketIOClient removeNodeByRemoteAddr(SocketAddress remoteAddr) {
@@ -100,10 +106,22 @@ public class NodeService {
             return true;
         }
 
+//        StringTokenizer stk1 = new StringTokenizer(node.getClient().getRemoteAddress().toString(), ":");
+//        String ip1 = stk1.nextToken();
+
         for (Node item : list) {
             if (item.getUniqueID() == null || item.getUniqueID().equals(node.getUniqueID())) {
                 return true;
             }
+
+
+//            StringTokenizer stk2 = new StringTokenizer(item.getClient().getRemoteAddress().toString(), ":");
+//            String ip2 = stk2.nextToken();
+//
+//            if (ip1.equals(ip2)) {
+//                return true;
+//            }
+
         }
         return false;
     }
