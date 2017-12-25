@@ -54,7 +54,7 @@ public class EmailService {
         Req req = requestResponseService.buildGetRequest(url, headers);
         Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
 
-        if (response == null) {
+        if (response == null || response.getBody() == null) {
             EmailResponse emailResponse = new EmailResponse();
             emailResponse.status = HttpStatus.EXPECTATION_FAILED.toString();
             emailResponse.result = "Contact Support. Error code " + getNodeFailureError();
