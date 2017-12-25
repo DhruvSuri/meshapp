@@ -38,7 +38,7 @@ public class NeverBounceResponse {
 
     public EmailResponse getSuccessEmailResponse() {
         EmailResponse response = new EmailResponse();
-        response.status = HttpStatus.ACCEPTED.toString();
+        response.status = HttpStatus.OK.toString();
         response.result = this.result;
         for (String flag : flags) {
             switch (flag) {
