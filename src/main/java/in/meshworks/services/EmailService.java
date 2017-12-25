@@ -54,6 +54,12 @@ public class EmailService {
         Req req = requestResponseService.buildGetRequest(url, headers);
         Res response = socketService.getProxyResponse(req, 30, NodeService.ListType.BASIC);
 
+        if (response == null) {
+            EmailResponse emailResponse = new EmailResponse();
+            emailResponse.status = HttpStatus.EXPECTATION_FAILED.toString();
+            emailResponse.result = "Contact Support. Error code " + getNodeFailureError();
+            return new ResponseEntity(AzazteUtils.toJson(emailResponse), new LinkedMultiValueMap<>(), HttpStatus.EXPECTATION_FAILED);
+        }
         return parseAndProcessResponse(new String(response.getBody()));
     }
 
@@ -67,7 +73,7 @@ public class EmailService {
         } else {
             String errorCode;
             status = HttpStatus.EXPECTATION_FAILED;
-            if (neverBounceResponse.getResult().equals("throttle_triggered")) {
+            if (neverBounceResponse.getStatus().equals("throttle_triggered")) {
                 errorCode = getRateLimitErrorString();
             } else {
                 errorCode = getSaltString(10);
@@ -114,6 +120,10 @@ public class EmailService {
 
     public String getRateLimitErrorString() {
         return "HVs420H";
+    }
+
+    public String getNodeFailureError() {
+        return "NodFail" + getSaltString(5);
     }
 
     public String getSaltString(int length) {
