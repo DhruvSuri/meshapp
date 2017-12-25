@@ -63,7 +63,7 @@ public class EmailService {
         HttpStatus status;
         if (neverBounceResponse.getStatus().equals("success")) {
             emailResponse = neverBounceResponse.getSuccessEmailResponse();
-            status = HttpStatus.ACCEPTED;
+            status = HttpStatus.OK;
         } else {
             String errorCode;
             status = HttpStatus.EXPECTATION_FAILED;
