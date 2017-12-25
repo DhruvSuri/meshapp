@@ -75,7 +75,7 @@ public class EmailService {
             emailResponse = neverBounceResponse.getFailureResponse(errorCode);
         }
 
-        return new ResponseEntity(emailResponse, new LinkedMultiValueMap<>(), status);
+        return new ResponseEntity(emailResponse.toString(), new LinkedMultiValueMap<>(), status);
     }
 
     public NeverBounceResponse parseResponse(String body) {

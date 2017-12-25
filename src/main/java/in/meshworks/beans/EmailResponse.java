@@ -10,4 +10,16 @@ public class EmailResponse {
     boolean acceptsAll;
     boolean dnsMx;
     boolean badDns;
+
+    @Override
+    public String toString() {
+        return "EmailResponse{" +
+                "status='" + status + '\'' +
+                ", result='" + result + '\'' +
+                ", dns=" + dns +
+                ", acceptsAll=" + acceptsAll +
+                ", dnsMx=" + dnsMx +
+                ", badDns=" + badDns +
+                '}';
+    }
 }
