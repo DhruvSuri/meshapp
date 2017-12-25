@@ -58,7 +58,7 @@ public class NeverBounceResponse {
     public EmailResponse getFailureResponse(String errorCode) {
         EmailResponse response = new EmailResponse();
         response.status = HttpStatus.EXPECTATION_FAILED.toString();
-        response.result = "Error code = " + errorCode + ".Contact Support. Thanks for joining our Beta program";
+        response.result = "Contact Support with error code " + errorCode + ".";
         return response;
     }
 }
