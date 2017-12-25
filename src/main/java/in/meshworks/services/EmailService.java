@@ -1,5 +1,6 @@
 package in.meshworks.services;
 
+import in.meshworks.beans.EmailResponse;
 import in.meshworks.beans.NeverBounceResponse;
 import in.meshworks.beans.Req;
 import in.meshworks.beans.Res;
@@ -58,25 +59,23 @@ public class EmailService {
 
     private ResponseEntity parseAndProcessResponse(String response) {
         NeverBounceResponse neverBounceResponse = parseResponse(response);
+        EmailResponse emailResponse = null;
         HttpStatus status;
-        String body;
         if (neverBounceResponse.getStatus().equals("success")) {
-            status = HttpStatus.OK;
-            body = neverBounceResponse.getResult();
+            emailResponse = neverBounceResponse.getSuccessEmailResponse();
+            status = HttpStatus.ACCEPTED;
         } else {
-            status = HttpStatus.EXPECTATION_FAILED;
             String errorCode;
+            status = HttpStatus.EXPECTATION_FAILED;
             if (neverBounceResponse.getResult().equals("throttle_triggered")) {
                 errorCode = getRateLimitErrorString();
             } else {
                 errorCode = getSaltString(10);
             }
-
-            body = "Error code = " + errorCode + ".Contact Support. Thanks for joining our Beta program";
+            emailResponse = neverBounceResponse.getFailureResponse(errorCode);
         }
 
-
-        return new ResponseEntity(body, new LinkedMultiValueMap<>(), status);
+        return new ResponseEntity(emailResponse, new LinkedMultiValueMap<>(), status);
     }
 
     public NeverBounceResponse parseResponse(String body) {
