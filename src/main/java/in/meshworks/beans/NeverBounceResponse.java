@@ -43,13 +43,13 @@ public class NeverBounceResponse {
         for (String flag : flags) {
             switch (flag) {
                 case "has_dns":
-                    response.dns = true;
+                    response.dns = true;break;
                 case "accepts_all":
-                    response.acceptsAll = true;
+                    response.acceptsAll = true;break;
                 case "has_dns_mx":
-                    response.dnsMx = true;
+                    response.dnsMx = true;break;
                 case "bad_dns":
-                    response.badDns = true;
+                    response.badDns = true;break;
             }
         }
         return response;
